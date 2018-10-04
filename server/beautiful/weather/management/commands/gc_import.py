@@ -1,9 +1,9 @@
 from django.core.management.base import BaseCommand
 
-from ...models import Station
+from weather.data_loaders import gc
 
 class Command(BaseCommand):
     help = 'Loads all climate data from Environment Canada'
 
     def handle(self, *args, **kwargs):
-        pass
+        gc.load_stations()

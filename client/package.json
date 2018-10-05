@@ -6,6 +6,9 @@
     "google-map-react": "^1.0.9",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0",
+    "redux-saga": "^0.16.0",
     "styled-components": "^3.4.9"
   },
   "devDependencies": {

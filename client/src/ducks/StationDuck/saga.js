@@ -12,7 +12,7 @@ import {
 function fetchStationsFromAPI() {
   return axios({
     method: "get",
-    url: 'http://localhost:8000/weather/stations/'
+    url: '/weather/stations/'
   })
 }
 

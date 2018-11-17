@@ -26,3 +26,4 @@ urlpatterns = [
     url(r'^weather/', include('weather.urls')),
     url(r'^$', views.FrontendAppView.as_view()),
 ]
+

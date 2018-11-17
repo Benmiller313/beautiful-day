@@ -29,7 +29,7 @@ SECRET_KEY = 'jt13m2vp8n9h18rjf$zywpw!(-vh+yg5$*ka1qy1yw-qf0x_%j'
 DEBUG = config('DEBUG', default=False, cast=bool)
 CORS_ORIGIN_ALLOW_ALL = DEBUG
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition

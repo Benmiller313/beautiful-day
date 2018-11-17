@@ -24,6 +24,7 @@ SECRET_KEY = 'jt13m2vp8n9h18rjf$zywpw!(-vh+yg5$*ka1qy1yw-qf0x_%j'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+CORS_ORIGIN_ALLOW_ALL = DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -40,10 +41,14 @@ INSTALLED_APPS = [
     'rest_framework',
     'weather.apps.WeatherConfig',
 ]
+if DEBUG:
+    INSTALLED_APPS += ('corsheaders', )
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',

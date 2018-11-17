@@ -1,4 +1,5 @@
 import csv
+from datetime import date
 from weather.models import Station
 
 
@@ -21,11 +22,10 @@ def load_stations():
         reader = csv.reader(raw_file, delimiter='\t')
         for row in reader:
             print row
-            Station(
-                source=Station.CANADIAN_GOVERNMENT,
-                name=row[NAME],
-                station_id=row[STATION_ID],
-                latitude=row[LATITUDE],
-                longitude=row[LONGITUDE],
-            ).save()
-
+            station, _ = Station.objects.get_or_create(source=Station.CANADIAN_GOVERNMENT, station_id=row[STATION_ID])
+            station.name=row[NAME]
+            station.latitude=row[LATITUDE]
+            station.longitude=row[LONGITUDE]
+            station.data_start=date(year=int(row[FIRST_YEAR]), month=1, day=1)
+            station.data_end=date(year=int(row[LAST_YEAR]), month=12, day=31)
+            station.save()

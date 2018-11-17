@@ -1,7 +1,7 @@
-import { put, call, takeEvery } from 'redux-saga'
+import { put, call, takeEvery } from 'redux-saga/effects'
 import axios from 'axios'
 import { 
-  FETCH_SATIONS,
+  FETCH_STATIONS,
   FETCH_STATIONS_SUCCESS,
   fetchStations,
   fetchedStations,
@@ -12,7 +12,7 @@ import {
 function fetchStationsFromAPI() {
   return axios({
     method: "get",
-    url: 'localhost:8000/weather/stations/'
+    url: 'http://localhost:8000/weather/stations/'
   })
 }
 
@@ -25,6 +25,7 @@ function* fetchWorker() {
       payload: stations,
     })
   } catch (error) {
+    console.log(error)
     yield put({
       type: FETCH_STATIONS_ERROR,
       error,
@@ -33,5 +34,5 @@ function* fetchWorker() {
 }
 
 export function* watchStationAsync() {
-  yield takeEvery(FETCH_SATIONS, fetchWorker)
+  yield takeEvery(FETCH_STATIONS, fetchWorker)
 }

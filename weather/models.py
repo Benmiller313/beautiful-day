@@ -11,9 +11,9 @@ class Station(models.Model):
     )
 
     source = models.CharField(max_length=2, choices=SOURCE_CHOICES)
-    name = models.CharField(max_length=255)
+    name = models.CharField(max_length=255, default='')
     station_id = models.CharField(max_length=255)
-    latitude = models.DecimalField(max_digits=20, decimal_places=12)
-    longitude = models.DecimalField(max_digits=20, decimal_places=12)
+    latitude = models.DecimalField(max_digits=20, decimal_places=12, null=True)
+    longitude = models.DecimalField(max_digits=20, decimal_places=12, null=True)
     data_start = models.DateField(null=True)
     data_end = models.DateField(null=True)

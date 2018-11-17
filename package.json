@@ -1,0 +1,6 @@
+{
+  "cacheDirectories": ["client/node_modules"],
+  "scripts": {
+    "postinstall": "cd client && yarn build"
+  }
+}

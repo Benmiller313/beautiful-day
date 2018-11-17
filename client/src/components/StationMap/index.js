@@ -47,7 +47,7 @@ class StationMap extends React.Component {
     return (
       <div style={{ height: '100vh', width: '100%' }}>
         <GoogleMapReact
-          bootstrapURLKeys={{key: 'AIzaSyDiPsgeif-4lAQjv_GaI4CNM34NV9G1hws'}}
+          bootstrapURLKeys={{key: ''}}
           center={this.state.mapProps.center}
           zoom={this.state.mapProps.zoom}
           onChange={this.onChange}

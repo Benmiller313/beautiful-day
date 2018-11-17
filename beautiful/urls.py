@@ -19,8 +19,11 @@ from django.conf.urls import (
 )
 from django.contrib import admin
 
+from beautiful import views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^weather/', include('weather.urls')),
+    url(r'^', views.FrontendAppView.as_view()),
+
 ]

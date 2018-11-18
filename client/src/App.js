@@ -3,10 +3,9 @@ import { Provider } from 'react-redux'
 import { applyMiddleware, compose, createStore } from 'redux'
 import createSagaMiddleware from 'redux-saga'
 
-import './App.css'
-import StationMap from './components/StationMap'
 import rootReducer from './rootReducer'
 import rootSaga from './rootSaga'
+import AppLayout from './containers/AppLayout';
 
 const sagaMiddleware = createSagaMiddleware()
 const reduxDevTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
@@ -18,7 +17,7 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <StationMap/>
+        <AppLayout/>
       </Provider>
     )
   }

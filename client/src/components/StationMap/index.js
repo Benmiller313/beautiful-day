@@ -26,10 +26,6 @@ class StationMap extends React.Component {
     }
   }
 
-  componentDidMount() {
-    this.props.fetchStations()
-  }
-
   onChange = (mapProps) => {
     
     this.setState({

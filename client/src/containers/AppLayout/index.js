@@ -5,7 +5,8 @@ import { BeatLoader } from 'react-spinners';
 
 
 import StationMap from '../../components/StationMap'
-import { fetchStations } from '../../ducks/StationDuck/actions';
+import { fetchStations } from '../../ducks/StationDuck/actions'
+import { fetchGeolocation } from '../../ducks/GeolocationDuck/actions'
 
 // import { FullScreenSplash } from './AppLayout.styles'
 
@@ -32,10 +33,11 @@ class UnconnectedAppLayout extends React.Component {
 
   componentDidMount() {
     this.props.fetchStations()
+    this.props.fetchGeolocation()
   }
 
   render() {
-    if (this.props.stations.length < 1) {
+    if (this.props.stations.length < 1 || this.props.geolocation.fetchingGeolocation) {
       return (
         <FullScreenSplash>
           <Title>Beautiful Day</Title>
@@ -56,12 +58,16 @@ class UnconnectedAppLayout extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  stations: state.stations
+  stations: state.stations,
+  geolocation: state.geolocation,
 })
 
 const mapDispatchToProps = (dispatch) => ({
   fetchStations: () => {
     dispatch(fetchStations())
+  },
+  fetchGeolocation: () => {
+    dispatch(fetchGeolocation())
   }
 })
 

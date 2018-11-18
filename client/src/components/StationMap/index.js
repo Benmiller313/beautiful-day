@@ -12,17 +12,30 @@ import { fetchStations } from '../../ducks/StationDuck/actions';
 class StationMap extends React.Component {
   static propTypes = {
     fetchStations: PropTypes.func,
+    geolocation: PropTypes.object,
     stations: PropTypes.array,
   }
 
   constructor(props) {
     super(props)
-    this.state = {
-      mapProps: {
-        center: {lat: 44.5895, lng: -75.6843},
-        zoom: 10,
-      },
-      clusters: [],
+    console.log(props.geolocation)
+    if (props.geolocation) {
+      this.state = {
+        mapProps: {
+          center: {lat: props.geolocation.coords.latitude, lng: props.geolocation.coords.longitude},
+          zoom: 10,
+        },
+        clusters: [],
+      }
+    }
+    else {
+      this.state = {
+        mapProps: {
+          center: {lat: 44.5895, lng: -75.6843},
+          zoom: 10,
+        },
+        clusters: [],
+      }
     }
   }
 
@@ -78,7 +91,8 @@ class StationMap extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  stations: state.stations
+  stations: state.stations,
+  geolocation: state.geolocation.geolocation,
 })
 
 const mapDispatchToProps = (dispatch) => ({

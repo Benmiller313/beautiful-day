@@ -89,31 +89,40 @@ class StationPin extends React.Component {
     })
   }
 
-  render() {
+  getModal = () => {
+    if (!this.state.downloadModalVisible) {
+      return false
+    }
     const years = []
     for(let i = parseInt(this.props.station.data_start); i<= parseInt(this.props.station.data_end); i++) {
       years.push(i)
     }
+    return (
+      <Modal
+        title={"Download Data"}
+        visible={this.state.downloadModalVisible}
+        onOk={this.handleOk}
+        onCancel={this.handleCancel}
+      >
+        <Select
+          placeholder="Select a year"
+          style={{ width: 150 }}
+          onChange={this.handleYearChange}
+        >
+          {years.map(year => (<Option value={year}>{year}</Option>))}
+        </Select>
+      </Modal>
+    )
+  }
+
+  render() {
     return (
       <PinBody>
         <h3>{this.props.station.name}</h3>
         <p>Data Start: {this.props.station.data_start}</p>
         <p>Data End: {this.props.station.data_end}</p>
         <Button onClick={this.showDownloadModal}>Download Data</Button>
-        <Modal
-          title={"Download Data"}
-          visible={this.state.downloadModalVisible}
-          onOk={this.handleOk}
-          onCancel={this.handleCancel}
-        >
-          <Select
-            placeholder="Select a year"
-            style={{ width: 150 }}
-            onChange={this.handleYearChange}
-          >
-            {years.map(year => (<Option value={year}>{year}</Option>))}
-          </Select>
-        </Modal>
+        {this.getModal()}
         <i></i>
       </PinBody>
     )

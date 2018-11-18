@@ -8,9 +8,16 @@ import rootSaga from './rootSaga'
 import AppLayout from './containers/AppLayout';
 
 const sagaMiddleware = createSagaMiddleware()
-const reduxDevTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
 
-const store = createStore(rootReducer, compose(applyMiddleware(sagaMiddleware), reduxDevTools))
+let store
+console.log(process.env.REACT_APP_DEBUG)
+if (process.env.REACT_APP_DEBUG) {
+  const reduxDevTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
+  store = createStore(rootReducer, compose(applyMiddleware(sagaMiddleware), reduxDevTools))
+}
+else {
+  store = createStore(rootReducer, compose(applyMiddleware(sagaMiddleware)))
+}
 sagaMiddleware.run(rootSaga)
 
 class App extends Component {

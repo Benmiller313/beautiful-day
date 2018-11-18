@@ -48,9 +48,7 @@ class StationMap extends React.Component {
   }
 
   render() {
-    console.log(process.env.REACT_APP_GOOGLE_MAPS_API_KEY)
     const cl2 = supercluster(this.props.stations);
-    const r2 = cl2({ bounds: { nw: { lat: 85, lng: -180 }, se: { lat: -85, lng: 180 } }, zoom: 2 });
     const clusters = this.state.mapProps.bounds ? cl2(
       this.state.mapProps
     ) : []

@@ -3,7 +3,8 @@ import PropTypes from 'prop-types'
 import { connect }  from 'react-redux'
 import GoogleMapReact from 'google-map-react'
 import supercluster from 'points-cluster'
-import { withPropsOnChange, compose } from 'recompose'
+import memoize from 'memoize-one'
+
 import MapPin from '../MapPin'
 import StationPin from '../StationPin'
 import { fetchStations } from '../../ducks/StationDuck/actions';
@@ -18,40 +19,53 @@ class StationMap extends React.Component {
 
   constructor(props) {
     super(props)
-    console.log(props.geolocation)
-    if (props.geolocation) {
-      this.state = {
-        mapProps: {
-          center: {lat: props.geolocation.coords.latitude, lng: props.geolocation.coords.longitude},
-          zoom: 10,
-        },
-        clusters: [],
-      }
-    }
-    else {
-      this.state = {
-        mapProps: {
-          center: {lat: 44.5895, lng: -75.6843},
-          zoom: 10,
-        },
-        clusters: [],
-      }
+    const center = props.geolocation ? 
+      {lat: props.geolocation.coords.latitude, lng: props.geolocation.coords.longitude} :
+      {lat: 44.5895, lng: -75.6843} // default to Brockville
+
+    this.state = {
+      mapProps: {
+        center,
+        zoom: 10,
+      },
+      clusters: [],
     }
   }
 
+  generateSuperCluster = memoize(stations => {
+    console.log('recalculating stations', stations)
+    return supercluster(
+      stations,
+      {
+        minZoom: 3,
+        maxZoom: 15,
+        radius: 100,
+      },
+    )
+  })
+
   onChange = (mapProps) => {
-    
     this.setState({
       mapProps,
-      clusters: mapProps.bounds ? this.props.getClusters(mapProps) : []
+    })
+  }
+
+  onClusterClick = (cluster) => {
+    this.setState({
+      mapProps: {
+        ...this.state.mapProps,
+        center: {lat: cluster.wy, lng: cluster.wx},
+        zoom: this.state.mapProps.zoom + 1,
+      }
     })
   }
 
   render() {
-    const cl2 = supercluster(this.props.stations);
-    const clusters = this.state.mapProps.bounds ? cl2(
+    const getClusters = this.generateSuperCluster(this.props.stations)
+    const clusters = this.state.mapProps.bounds ? getClusters(
       this.state.mapProps
     ) : []
+    const clusterClick = this.onClusterClick
     return (
       <div style={{ height: '100vh', width: '100%' }}>
         <GoogleMapReact
@@ -62,7 +76,6 @@ class StationMap extends React.Component {
         >
         {
           clusters.map(cluster => {
-
             return cluster.numPoints === 1 ? 
             (
               <StationPin
@@ -74,9 +87,11 @@ class StationMap extends React.Component {
               />
             ): (
               <MapPin
+                cluster={cluster}
                 key={cluster.points[0].station_id} 
                 lat={cluster.wy}
                 lng={cluster.wx}
+                onClick={clusterClick}
                 text={`${cluster.numPoints}`}
               />
             )
@@ -99,19 +114,4 @@ const mapDispatchToProps = (dispatch) => ({
   }
 })
 
-export default compose(
-  withPropsOnChange(
-    ['stations'],
-    ({stations=[]}) => ({
-      getClusters: supercluster(
-        stations,
-        {
-          minZoom: 3,
-          maxZoom: 15,
-          radius: 60,
-        },
-      )
-    })
-  ),
-  connect(mapStateToProps, mapDispatchToProps)
-)(StationMap)
+export default connect(mapStateToProps, mapDispatchToProps)(StationMap)

@@ -1,0 +1,1 @@
+export const BRAND_BLUE = '#1ad3fd'

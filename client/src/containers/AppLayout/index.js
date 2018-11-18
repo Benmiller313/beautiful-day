@@ -7,7 +7,7 @@ import { BeatLoader } from 'react-spinners';
 import StationMap from '../../components/StationMap'
 import { fetchStations } from '../../ducks/StationDuck/actions'
 import { fetchGeolocation } from '../../ducks/GeolocationDuck/actions'
-
+import { BRAND_BLUE } from '../../constants/style'
 // import { FullScreenSplash } from './AppLayout.styles'
 
 const FullScreenSplash = styled.div`
@@ -17,7 +17,7 @@ const FullScreenSplash = styled.div`
   align-items: center;
   min-height: 100vh;
   color: white;
-  background-color:#1ad3fd
+  background-color:${BRAND_BLUE};
 `
 
 const Title = styled.div`

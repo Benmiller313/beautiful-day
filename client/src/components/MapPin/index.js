@@ -4,15 +4,15 @@ import styled from 'styled-components'
 
 import { BRAND_BLUE } from '../../constants/style'
 
-const K_WIDTH = 40
-const K_HEIGHT = 40
+const K_WIDTH = 50
+const K_HEIGHT = 50
 
 const PinShape = styled.div`
-    position: absolute
+    display: flex;
+    align-items: center;
+    position: absolute;
     width: ${K_WIDTH}px;
     height: ${K_HEIGHT}px;
-    left: ${-(K_WIDTH / 2 + 10)}px;
-    top: ${-(K_HEIGHT / 2 + 10)}px;
 
     border: 5px solid ${BRAND_BLUE};
     border-radius: ${K_HEIGHT}px;
@@ -46,7 +46,7 @@ class MapPin extends React.Component {
             <PinShape
                 onClick={this.onClick}
             >
-                <p>{this.props.text}</p>
+                <div style={{'margin': 'auto'}}>{this.props.text}</div>
             </PinShape>
         )
     }

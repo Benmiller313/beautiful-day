@@ -32,7 +32,7 @@ def aggregatedData(request, station_id):
     station = get_object_or_404(queryset, pk=station_id)
 
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+    response['Content-Disposition'] = 'attachment; filename="{}.csv"'.format(station.name.replace(' ', ''))
 
     writer = csv.writer(response)
     writer.writerow(['date', 'max_temp', 'min_temp', 'mean_temp', 'rain', 'snow', 'total_percipitation', 'snow_on_ground'])

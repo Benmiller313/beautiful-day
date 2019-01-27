@@ -82,7 +82,7 @@ WSGI_APPLICATION = 'beautiful.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=config('HEROKU_POSTGRESQL_AQUA_URL')
+        default=config('DATABASE_URL')
     )
 }
 

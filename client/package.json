@@ -25,7 +25,6 @@
     "styled-components": "^3.4.9"
   },
   "devDependencies": {
-    "react-app-rewire-svg-react-loader": "codebandits/react-app-rewire-svg-react-loader"
   },
   "scripts": {
     "start": "react-app-rewired start",

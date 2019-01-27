@@ -4,7 +4,7 @@ import {
 } from './actions'
 
 const defaultState = {
-  stationList: [],
+  stationList: null,
   filter: 'all',
 }
 

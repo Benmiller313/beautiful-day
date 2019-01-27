@@ -39,7 +39,7 @@ class UnconnectedAppLayout extends React.Component {
   }
 
   render() {
-    if (this.props.stations.length < 1 || this.props.geolocation.fetchingGeolocation) {
+    if (this.props.stations === null || this.props.geolocation.fetchingGeolocation) {
       return (
         <FullScreenSplash>
           <Title>Beautiful Day</Title>

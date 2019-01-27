@@ -105,7 +105,7 @@ def load_stations():
             station.data_end=date(year=int(row[LAST_YEAR]), month=12, day=31)
             station.save()
 
-            load_daily(station)
+            #load_daily(station)
 
 
 

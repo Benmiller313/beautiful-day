@@ -1,14 +1,25 @@
 import {
-  FETCH_STATIONS_SUCCESS
+  FETCH_STATIONS_SUCCESS,
+  SET_STATION_FILTER,
 } from './actions'
 
+const defaultState = {
+  stationList: [],
+  filter: 'all',
+}
 
-export default function stationReducer(state=[], action){
+export default function stationReducer(state=defaultState, action){
   switch(action.type){
     case FETCH_STATIONS_SUCCESS: 
-      return action.payload.filter((station, index) => {
-        return index % 1 === 0;
-      }).map(value => ({...value, lat: parseFloat(value.latitude), lng: parseFloat(value.longitude)}))
+      return {
+        ...state,
+        stationList: action.payload.map(value => ({...value, lat: parseFloat(value.latitude), lng: parseFloat(value.longitude)}))
+      }
+    case SET_STATION_FILTER:
+      return {
+        ...state,
+        filter: action.payload,
+      }
     default:
       return state;
   }

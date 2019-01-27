@@ -89,6 +89,20 @@ class StationPin extends React.Component {
     })
   }
 
+  downloadAggregates = () => {
+    window.location = `/weather/stations/${this.props.station.id}/aggregated`
+  }
+
+  getDownloadAll = () => {
+    if (this.props.station.has_daily_data) {
+      return (
+        <Button onClick={this.downloadAggregates}>Download All Aggregate Data</Button>  
+      )
+    } else {
+      return null
+    }
+  }
+
   getModal = () => {
     if (!this.state.downloadModalVisible) {
       return false
@@ -103,6 +117,9 @@ class StationPin extends React.Component {
         visible={this.state.downloadModalVisible}
         onOk={this.handleOk}
         onCancel={this.handleCancel}
+        footer={[
+          <Button key="back" onClick={this.handleCancel}>Close</Button>,
+        ]}
       >
         <Select
           placeholder="Select a year"
@@ -111,6 +128,8 @@ class StationPin extends React.Component {
         >
           {years.map(year => (<Option value={year}>{year}</Option>))}
         </Select>
+        <Button onClick={this.handleOk}>Download Year</Button>
+        {this.getDownloadAll()}
       </Modal>
     )
   }

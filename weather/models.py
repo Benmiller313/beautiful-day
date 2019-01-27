@@ -17,3 +17,18 @@ class Station(models.Model):
     longitude = models.DecimalField(max_digits=20, decimal_places=12, null=True)
     data_start = models.DateField(null=True)
     data_end = models.DateField(null=True)
+
+    def has_daily_data(self):
+        return self.dailyrecord_set.exists()
+
+
+class DailyRecord(models.Model):
+    station = models.ForeignKey(Station)
+    date = models.DateField()
+    max_temp = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    min_temp = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    mean_temp = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    rain = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    snow = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    total_percipitation = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+    snow_on_ground = models.DecimalField(max_digits=5, decimal_places=2, null=True)

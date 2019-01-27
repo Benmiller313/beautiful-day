@@ -7,8 +7,9 @@ import memoize from 'memoize-one'
 
 import MapPin from '../MapPin'
 import StationPin from '../StationPin'
-import { fetchStations } from '../../ducks/StationDuck/actions';
-
+import { fetchStations } from '../../ducks/StationDuck/actions'
+import { selectStations } from '../../ducks/StationDuck/selectors'
+import MapSideBar from '../MapSidebar'
 
 class StationMap extends React.Component {
   static propTypes = {
@@ -21,7 +22,7 @@ class StationMap extends React.Component {
     super(props)
     const center = props.geolocation ? 
       {lat: props.geolocation.coords.latitude, lng: props.geolocation.coords.longitude} :
-      {lat: 44.5895, lng: -75.6843} // default to Brockville
+      {lat: 48.650000000000, lng: -123.630000000000} // default to Vancouver island
 
     this.state = {
       mapProps: {
@@ -33,7 +34,6 @@ class StationMap extends React.Component {
   }
 
   generateSuperCluster = memoize(stations => {
-    console.log('recalculating stations', stations)
     return supercluster(
       stations,
       {
@@ -61,11 +61,13 @@ class StationMap extends React.Component {
   }
 
   render() {
+    console.log(this.props.stations)
     const getClusters = this.generateSuperCluster(this.props.stations)
     const clusters = this.state.mapProps.bounds ? getClusters(
       this.state.mapProps
     ) : []
     const clusterClick = this.onClusterClick
+    console.log(clusters)
     return (
       <div style={{ height: '100vh', width: '100%' }}>
         <GoogleMapReact
@@ -98,13 +100,15 @@ class StationMap extends React.Component {
           })
         }
         </GoogleMapReact>
+        <MapSideBar />
+
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  stations: state.stations,
+  stations: selectStations(state),
   geolocation: state.geolocation.geolocation,
 })
 

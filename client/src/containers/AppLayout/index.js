@@ -5,9 +5,11 @@ import { BeatLoader } from 'react-spinners';
 
 
 import StationMap from '../../components/StationMap'
+import PageHeader from '../../components/PageHeader'
 import { fetchStations } from '../../ducks/StationDuck/actions'
 import { fetchGeolocation } from '../../ducks/GeolocationDuck/actions'
 import { BRAND_BLUE } from '../../constants/style'
+import { selectStations } from '../../ducks/StationDuck/selectors';
 // import { FullScreenSplash } from './AppLayout.styles'
 
 const FullScreenSplash = styled.div`
@@ -52,13 +54,15 @@ class UnconnectedAppLayout extends React.Component {
       )
     }
     return (
-      <StationMap />
+      <div>
+        <StationMap />
+      </div>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  stations: state.stations,
+  stations: selectStations(state),
   geolocation: state.geolocation,
 })
 

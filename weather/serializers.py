@@ -6,4 +6,14 @@ from weather.models import Station
 class StationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Station
-        fields = ('source', 'name', 'station_id', 'latitude', 'longitude', 'data_start', 'data_end',)
+        fields = (
+            'id',
+            'source',
+            'name',
+            'station_id',
+            'latitude',
+            'longitude',
+            'data_start',
+            'data_end',
+            'has_daily_data',
+        )

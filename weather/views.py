@@ -36,7 +36,7 @@ def aggregatedData(request, station_id):
 
     writer = csv.writer(response)
     writer.writerow(['date', 'max_temp', 'min_temp', 'mean_temp', 'rain', 'snow', 'total_percipitation', 'snow_on_ground'])
-    for record in station.dailyrecord_set.all():
+    for record in station.dailyrecord_set.all().order_by('-date'):
         writer.writerow([
             record.date,
             record.max_temp,

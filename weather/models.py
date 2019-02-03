@@ -17,9 +17,7 @@ class Station(models.Model):
     longitude = models.DecimalField(max_digits=20, decimal_places=12, null=True)
     data_start = models.DateField(null=True)
     data_end = models.DateField(null=True)
-
-    def has_daily_data(self):
-        return self.dailyrecord_set.exists()
+    has_daily_data = models.BooleanField(default=False)
 
 
 class DailyRecord(models.Model):

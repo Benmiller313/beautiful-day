@@ -17,7 +17,7 @@ const FullScreenSplash = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  height: 100%;
   color: white;
   background-color:${BRAND_BLUE};
 `
@@ -54,9 +54,7 @@ class UnconnectedAppLayout extends React.Component {
       )
     }
     return (
-      <div>
-        <StationMap />
-      </div>
+      <StationMap />
     )
   }
 }

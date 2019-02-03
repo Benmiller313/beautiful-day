@@ -10,8 +10,7 @@ import AppLayout from './containers/AppLayout';
 const sagaMiddleware = createSagaMiddleware()
 
 let store
-console.log(process.env.REACT_APP_DEBUG)
-if (process.env.REACT_APP_DEBUG) {
+if (false && process.env.REACT_APP_DEBUG) {
   const reduxDevTools = window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__();
   store = createStore(rootReducer, compose(applyMiddleware(sagaMiddleware), reduxDevTools))
 }

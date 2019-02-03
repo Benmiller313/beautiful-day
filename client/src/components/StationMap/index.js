@@ -69,7 +69,7 @@ class StationMap extends React.Component {
     const clusterClick = this.onClusterClick
     console.log(clusters)
     return (
-      <div style={{ height: '100vh', width: '100%' }}>
+      <div style={{ height: '100%', width: '100%' }}>
         <GoogleMapReact
           bootstrapURLKeys={{key: process.env.REACT_APP_GOOGLE_MAPS_API_KEY}}
           center={this.state.mapProps.center}

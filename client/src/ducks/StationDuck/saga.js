@@ -26,6 +26,7 @@ function* fetchWorker() {
     })
   } catch (error) {
     console.log(error)
+    alert('Could not load station data. Error: ' + error.response.status)
     yield put({
       type: FETCH_STATIONS_ERROR,
       error,

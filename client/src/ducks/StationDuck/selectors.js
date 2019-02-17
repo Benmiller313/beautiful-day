@@ -3,7 +3,6 @@ export const selectStations = (state) => {
     if(filter === 'all') {
         return state.stations.stationList
     } else {
-        return state.stations.stationList.filter(station => station.has_daily_data)    
+        return state.stations.stationList.filter(station => station.daily_record_count > 0)    
     }
-
 }

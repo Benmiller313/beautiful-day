@@ -18,6 +18,9 @@ class Station(models.Model):
     data_start = models.DateField(null=True)
     data_end = models.DateField(null=True)
     has_daily_data = models.BooleanField(default=False)
+    daily_record_count = models.IntegerField(null=True)
+    daily_temp_count = models.IntegerField(null=True)
+    daily_percip_count = models.IntegerField(null=True)
 
 
 class DailyRecord(models.Model):

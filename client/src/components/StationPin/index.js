@@ -7,7 +7,7 @@ import { Button, Modal, Select } from 'antd'
 const PinBody = styled.div`
   transform:translate(-50%, -100%);
 
-  min-width:200px; 
+  min-width:220px; 
   top:-20px;
   left:50%;
   padding:10px 20px;
@@ -49,6 +49,7 @@ const downloadUrl = 'http://climate.weather.gc.ca/climate_data/bulk_data_e.html'
 class StationPin extends React.Component {
   static propTypes = {
     station: PropTypes.object,
+    onVisualizeStation: PropTypes.func,
   }
   static defaultProps = {
     station: '',
@@ -94,7 +95,7 @@ class StationPin extends React.Component {
   }
 
   getDownloadAll = () => {
-    if (this.props.station.has_daily_data) {
+    if (this.props.station.daily_record_count > 0) {
       return (
         <Button onClick={this.downloadAggregates}>Download All Aggregate Data</Button>  
       )
@@ -140,6 +141,10 @@ class StationPin extends React.Component {
         <h3>{this.props.station.name}</h3>
         <p>Data Start: {this.props.station.data_start}</p>
         <p>Data End: {this.props.station.data_end}</p>
+        <p>Total Daily Records: {this.props.station.daily_record_count}</p>
+        <p>Daily Temp Records: {this.props.station.daily_temp_count}</p>
+        <p>Daily Percip Records: {this.props.station.daily_percip_count}</p>
+        <Button onClick={() => {this.props.onVisualizeStation(this.props.station.station_id)}}>Visualize</Button>
         <Button onClick={this.showDownloadModal}>Download Data</Button>
         {this.getModal()}
         <i></i>

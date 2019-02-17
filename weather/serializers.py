@@ -15,5 +15,7 @@ class StationSerializer(serializers.ModelSerializer):
             'longitude',
             'data_start',
             'data_end',
-            'has_daily_data',
+            'daily_record_count',
+            'daily_temp_count',
+            'daily_percip_count',
         )

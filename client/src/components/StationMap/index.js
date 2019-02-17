@@ -10,6 +10,7 @@ import StationPin from '../StationPin'
 import { fetchStations } from '../../ducks/StationDuck/actions'
 import { selectStations } from '../../ducks/StationDuck/selectors'
 import MapSideBar from '../MapSidebar'
+import StationVisualization from '../StationVisualization'
 
 class StationMap extends React.Component {
   static propTypes = {
@@ -30,6 +31,7 @@ class StationMap extends React.Component {
         zoom: 10,
       },
       clusters: [],
+      visualizedStation: null,
     }
   }
 
@@ -50,6 +52,12 @@ class StationMap extends React.Component {
     })
   }
 
+  onVisualizeStation = (stationId) => {
+    this.setState({
+      visualizedStation: stationId
+    })
+  }
+
   onClusterClick = (cluster) => {
     this.setState({
       mapProps: {
@@ -61,13 +69,20 @@ class StationMap extends React.Component {
   }
 
   render() {
-    console.log(this.props.stations)
+    if (this.state.visualizedStation) {
+      return (
+      <StationVisualization 
+        stationId={this.state.visualizedStation}
+        onClose={() => {this.setState({visualizedStation: null})}}
+      />
+      )
+    }
+
     const getClusters = this.generateSuperCluster(this.props.stations)
     const clusters = this.state.mapProps.bounds ? getClusters(
       this.state.mapProps
     ) : []
     const clusterClick = this.onClusterClick
-    console.log(clusters)
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <GoogleMapReact
@@ -85,6 +100,7 @@ class StationMap extends React.Component {
                 station={cluster.points[0]}
                 lat={cluster.points[0].lat}
                 lng={cluster.points[0].lng}
+                onVisualizeStation={this.onVisualizeStation}
 
               />
             ): (

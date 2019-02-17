@@ -2,15 +2,14 @@ import React from 'react'
 import { connect } from 'react-redux'
 import styled from 'styled-components'
 import { BeatLoader } from 'react-spinners';
+import { BrowserRouter } from 'react-router-dom'
 
 
 import StationMap from '../../components/StationMap'
-import PageHeader from '../../components/PageHeader'
 import { fetchStations } from '../../ducks/StationDuck/actions'
 import { fetchGeolocation } from '../../ducks/GeolocationDuck/actions'
 import { BRAND_BLUE } from '../../constants/style'
 import { selectStations } from '../../ducks/StationDuck/selectors';
-// import { FullScreenSplash } from './AppLayout.styles'
 
 const FullScreenSplash = styled.div`
   display: flex;

@@ -3,6 +3,13 @@ from datetime import date
 from contextlib import closing
 
 import requests
+from django.db.models import (
+    Sum,
+    Case,
+    Count,
+    IntegerField,
+    When,
+)
 
 from weather.models import Station, DailyRecord
 
@@ -16,7 +23,6 @@ def val_or_none(val):
 
 
 def load_daily(station):
-
     url = 'http://climate.weather.gc.ca/climate_data/bulk_data_e.html' \
           '?format=csv&stationID={station_id}&Year={year}&timeframe=2&submit=Download+Data'
 
@@ -40,11 +46,13 @@ def load_daily(station):
     TOTAL_PERCIP = 19
     SNOW_ON_GROUND = 21
 
-
-
+    total = 0
     year = station.data_start.year
-    while(year <= station.data_end.year):
+    records = []
+    while (year <= station.data_end.year):
+        print "Clearing Old Data"
         DailyRecord.objects.filter(station_id=station.id, date__year=year).delete()
+        print "Downloading", year
         with closing(requests.get(url.format(year=year, station_id=station.station_id), stream=True)) as r:
             reader = csv.reader(r.iter_lines(), delimiter=',', quotechar='"')
             rows = 0
@@ -53,11 +61,8 @@ def load_daily(station):
                 if rows < header_rows:
                     rows += 1
                     continue
-                print row
-                if row[MAX_TEMP] == '':
-                    continue
                 try:
-                    record = DailyRecord(
+                    records.append(DailyRecord(
                         station=station,
                         date=date(
                             year=int(row[YEAR]),
@@ -71,11 +76,18 @@ def load_daily(station):
                         snow=val_or_none(row[TOTAL_SNOW]),
                         total_percipitation=val_or_none(row[TOTAL_PERCIP]),
                         snow_on_ground=val_or_none(row[SNOW_ON_GROUND]),
-                    )
-                    record.save()
+                    ))
+
                 except ValueError as e:
                     print 'Error in row:', row, e
+
         year += 1
+    DailyRecord.objects.bulk_create(records)
+    print "added", len(records), "records"
+    total += len(records)
+    if total:
+        station.has_daily_data = True
+        station.save()
 
 
 def load_stations():
@@ -98,11 +110,40 @@ def load_stations():
         for row in reader:
             print row
             station, _ = Station.objects.get_or_create(source=Station.CANADIAN_GOVERNMENT, station_id=row[STATION_ID])
-            station.name=row[NAME]
-            station.latitude=row[LATITUDE]
-            station.longitude=row[LONGITUDE]
-            station.data_start=date(year=int(row[FIRST_YEAR]), month=1, day=1)
-            station.data_end=date(year=int(row[LAST_YEAR]), month=12, day=31)
+            station.name = row[NAME]
+            station.latitude = row[LATITUDE]
+            station.longitude = row[LONGITUDE]
+            station.data_start = date(year=int(row[FIRST_YEAR]), month=1, day=1)
+            station.data_end = date(year=int(row[LAST_YEAR]), month=12, day=31)
             station.save()
+            if not station.has_daily_data:
+                load_daily(station)
 
-            load_daily(station)
+
+def denormalize():
+    for station in Station.objects.filter(source='GC'):
+        # This nasty aggregate is much better in Django 2
+        # Maybe its time for python 3...
+        print station.name
+        aggregates = Station.objects.filter(id=station.id).aggregate(
+            num_records=Count('dailyrecord'),
+            num_temp=Sum(
+                Case(
+                    When(dailyrecord__max_temp__isnull=False, then=1),
+                    default=0,
+                    output_field=IntegerField(),
+                ),
+            ),
+            num_percip=Sum(
+                Case(
+                    When(dailyrecord__total_percipitation__isnull=False, then=1),
+                    default=0,
+                    output_field=IntegerField()
+                )
+            )
+        )
+        station.daily_record_count = aggregates['num_records']
+        station.daily_temp_count = aggregates['num_temp']
+        station.daily_percip_count = aggregates['num_percip']
+        station.save()
+        print aggregates

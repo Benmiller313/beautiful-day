@@ -27,29 +27,29 @@ const PinShape = styled.div`
 `
 
 class MapPin extends React.Component {
-    static propTypes = {
-        onClick: PropTypes.func,
-        text: PropTypes.string,
-    }
+  static propTypes = {
+    onClick: PropTypes.func,
+    text: PropTypes.string,
+  }
 
-    static defaultProps = {
-        onClick: () => {},
-        text: '',
-    }
+  static defaultProps = {
+    onClick: () => { },
+    text: '',
+  }
 
-    onClick = () => {
-        this.props.onClick(this.props.cluster)
-    }
+  onClick = () => {
+    this.props.onClick(this.props.cluster)
+  }
 
-    render() {
-        return (
-            <PinShape
-                onClick={this.onClick}
-            >
-                <div style={{'margin': 'auto'}}>{this.props.text}</div>
-            </PinShape>
-        )
-    }
+  render() {
+    return (
+      <PinShape
+        onClick={this.onClick}
+      >
+        <div style={{ 'margin': 'auto' }}>{this.props.text}</div>
+      </PinShape>
+    )
+  }
 }
 
 export default MapPin

@@ -1,10 +1,12 @@
 import {
   FETCH_STATIONS_SUCCESS,
   SET_STATION_FILTER,
+  FETCH_STATION_GRAPH_ALL_SUCCESS,
 } from './actions'
 
 const defaultState = {
   stationList: null,
+  stationGraphData: {},
   filter: 'all',
 }
 
@@ -14,6 +16,14 @@ export default function stationReducer(state=defaultState, action){
       return {
         ...state,
         stationList: action.payload.map(value => ({...value, lat: parseFloat(value.latitude), lng: parseFloat(value.longitude)}))
+      }
+    case FETCH_STATION_GRAPH_ALL_SUCCESS:
+      return {
+        ...state,
+        stationGraphData: {
+          ...state.stationGraphData,
+          [action.payload.stationId]: action.payload.data.map(row => [new Date(row[0]), parseFloat(row[1])]),
+        }
       }
     case SET_STATION_FILTER:
       return {

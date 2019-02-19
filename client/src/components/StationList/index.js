@@ -32,6 +32,7 @@ const Dot = styled.div`
 class StationList extends React.Component {
   static PropTypes = {
     onSeeMore: PropTypes.func.isRequired,
+    onVisualizeStation: PropTypes.func.isRequired,
     page: PropTypes.number,
     stations: PropTypes.array.isRequired,
   }
@@ -39,6 +40,7 @@ class StationList extends React.Component {
   static defaultProps = {
     page: 1,
   }
+
 
   render() {
     const seeMoreButton = this.props.page * 30 < this.props.stations.length ? (
@@ -57,7 +59,12 @@ class StationList extends React.Component {
         loadMore={seeMoreButton}
         renderItem={station => (
           <List.Item actions={[
-            <a key={'viz'}>visualize</a>,
+            <a 
+              key={'viz'}
+              onClick={() => this.props.onVisualizeStation(station.id)}
+            >
+              visualize
+            </a>,
             <a 
               key={'down'}
               href={`/weather/stations/${station.id}/aggregated`}  

@@ -6,6 +6,7 @@
     "antd": "^3.10.7",
     "axios": "^0.18.0",
     "babel-plugin-import": "^1.11.0",
+    "dygraphs": "^2.1.0",
     "google-map-react": "^1.0.9",
     "highcharts": "^7.0.3",
     "highcharts-react-official": "^2.0.0",

@@ -2,7 +2,7 @@
 from __future__ import unicode_literals
 import csv
 
-from django.http import HttpResponse, StreamingHttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
@@ -48,3 +48,12 @@ def aggregatedData(request, station_id):
             record.snow_on_ground,
         ])
     return response
+
+
+def stationGraph(request, station_id):
+    queryset = Station.objects.all()
+    station = get_object_or_404(queryset, pk=station_id)
+
+    formatted = [[record.date, record.max_temp] for record in station.dailyrecord_set.all().order_by('date')]
+
+    return JsonResponse(data={'data': formatted})

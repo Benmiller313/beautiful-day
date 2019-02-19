@@ -108,6 +108,7 @@ class StationMap extends React.Component {
         <MapSideBar />
         <StationListModal
           onClose={this.onCloseClusterModal}
+          onVisualizeStation={this.onVisualizeStation}
           stations={this.state.focusedStations ? this.state.focusedStations : []}
           visible={this.state.focusedStations !== null}
         />

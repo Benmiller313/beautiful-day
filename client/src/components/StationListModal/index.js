@@ -7,6 +7,7 @@ import StationList from '../StationList';
 class StationListModal extends React.Component {
   static propTypes = {
     onClose: PropTypes.func.isRequired,
+    onVisualizeStation: PropTypes.func.isRequired,
     stations: PropTypes.array,
     visible: PropTypes.bool.isRequired,
   }
@@ -38,8 +39,10 @@ class StationListModal extends React.Component {
       >
         <StationList 
           onSeeMore={this.onSeeMore}
+          onVisualizeStation={this.props.onVisualizeStation}
           page={this.state.page}
-          stations={this.props.stations} />
+          stations={this.props.stations}
+        />
       </Modal>
     )
   }

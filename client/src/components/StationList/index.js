@@ -15,10 +15,10 @@ const YearText = styled.span`
 `
 const calculateStationColor = (station) => {
   if (station.daily_record_count === 0){
-    return '#bbbbbbb9'
+    return '#bbb'
   }
   const raw_opacity = station.daily_temp_count / 10000
-  return `rgb(26,211,253,${raw_opacity > 1 ? 1 : raw_opacity})`
+  return `rgba(26,211,253,${raw_opacity > 1 ? 1 : raw_opacity})`
 }
 
 

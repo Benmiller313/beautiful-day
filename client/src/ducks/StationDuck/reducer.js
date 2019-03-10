@@ -7,7 +7,10 @@ import {
 const defaultState = {
   stationList: null,
   stationGraphData: {},
-  filter: 'all',
+  filters: {
+    aggregatedData: false,
+    name: '',
+  },
 }
 
 export default function stationReducer(state=defaultState, action){
@@ -28,7 +31,10 @@ export default function stationReducer(state=defaultState, action){
     case SET_STATION_FILTER:
       return {
         ...state,
-        filter: action.payload,
+        filters: {
+          ...state.filters,
+          ...action.payload
+        },
       }
     default:
       return state;

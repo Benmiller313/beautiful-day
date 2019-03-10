@@ -8,7 +8,7 @@ import memoize from 'memoize-one'
 import MapPin from '../MapPin'
 import StationPin from '../StationPin'
 import { fetchStations } from '../../ducks/StationDuck/actions'
-import { selectStations } from '../../ducks/StationDuck/selectors'
+import { selectFilteredStations } from '../../ducks/StationDuck/selectors'
 import MapSideBar from '../MapSidebar'
 import StationListModal from '../StationListModal';
 import StationVisualizationLayout from '../StationVisualizationLayout';
@@ -127,7 +127,7 @@ class StationMap extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  stations: selectStations(state),
+  stations: selectFilteredStations(state),
   geolocation: state.geolocation.geolocation,
 })
 

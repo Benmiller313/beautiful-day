@@ -9,7 +9,7 @@ import StationMap from '../../components/StationMap'
 import { fetchStations } from '../../ducks/StationDuck/actions'
 import { fetchGeolocation } from '../../ducks/GeolocationDuck/actions'
 import { BRAND_BLUE } from '../../constants/style'
-import { selectStations } from '../../ducks/StationDuck/selectors';
+import { selectFilteredStations } from '../../ducks/StationDuck/selectors';
 
 const FullScreenSplash = styled.div`
   display: flex;
@@ -59,7 +59,7 @@ class UnconnectedAppLayout extends React.Component {
 }
 
 const mapStateToProps = (state) => ({
-  stations: selectStations(state),
+  stations: selectFilteredStations(state),
   geolocation: state.geolocation,
 })
 

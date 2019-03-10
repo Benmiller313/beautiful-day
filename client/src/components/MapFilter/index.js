@@ -5,31 +5,41 @@ import { Divider, Radio } from 'antd'
 
 import { setStationFilter } from '../../ducks/StationDuck/actions'
 
+import { AggregateRadio, NameSearch } from './MapFilter.styles'
+
 class MapFilter extends React.PureComponent {
   static propTypes = {
-    filter: PropTypes.oneOf(['all', 'aggregated']),
+    filters: PropTypes.object.isRequired,
     setStationFilter: PropTypes.func,
   }
 
   setFilter = (e) => {
-    this.props.setStationFilter(e.target.value)
+    this.props.setStationFilter({
+      aggregatedData: e.target.value!=='all'
+    })
   }
 
   render() {
     return (
       <div>
         <Divider orientation="left">Filter Stations</Divider>
-        <Radio.Group onChange={this.setFilter} defaultValue={this.props.filter} buttonStyle={'solid'}>
+        <AggregateRadio onChange={this.setFilter} defaultValue={this.props.filters.aggregatedData ? 'aggregated' : 'all'} buttonStyle={'solid'}>
           <Radio.Button value='all'>All</Radio.Button>
           <Radio.Button value='aggregated'>Aggregated Data</Radio.Button>
-        </Radio.Group>
+        </AggregateRadio>
+        <NameSearch
+          defaultValue={this.props.filters.name}
+          placeholder="Name Contains"
+          onSearch={value => this.props.setStationFilter({name: value.toUpperCase()})}
+          enterButton
+        />
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  filter: state.stations.filter,
+  filters: state.stations.filters,
 })
 
 const mapDispatchToProps = ({

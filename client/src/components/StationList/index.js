@@ -30,7 +30,8 @@ const Dot = styled.div`
 `
 
 class StationList extends React.Component {
-  static PropTypes = {
+  static propTypes = {
+    onCenterStation: PropTypes.func.isRequired,
     onSeeMore: PropTypes.func.isRequired,
     onVisualizeStation: PropTypes.func.isRequired,
     page: PropTypes.number,
@@ -59,9 +60,14 @@ class StationList extends React.Component {
         loadMore={seeMoreButton}
         renderItem={station => (
           <List.Item actions={[
+            <a
+              onClick={() => this.props.onCenterStation(station)}
+            >
+              center on map
+            </a>,
             <a 
               key={'viz'}
-              onClick={() => this.props.onVisualizeStation(station.id)}
+              onClick={() => this.props.onVisualizeStation(station)}
             >
               visualize
             </a>,

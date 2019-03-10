@@ -19,7 +19,7 @@ const ButtonDiv = styled.div`
 `
 
 class FloatingMenuButton extends React.PureComponent {
-  static PropTypes = {
+  static propTypes = {
     onClick: PropTypes.func.isRequired
   }
   

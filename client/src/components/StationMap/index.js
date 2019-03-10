@@ -10,8 +10,8 @@ import StationPin from '../StationPin'
 import { fetchStations } from '../../ducks/StationDuck/actions'
 import { selectStations } from '../../ducks/StationDuck/selectors'
 import MapSideBar from '../MapSidebar'
-import StationVisualization from '../StationVisualization'
 import StationListModal from '../StationListModal';
+import StationVisualizationLayout from '../StationVisualizationLayout';
 
 class StationMap extends React.Component {
   static propTypes = {
@@ -54,10 +54,18 @@ class StationMap extends React.Component {
     })
   }
 
-  onVisualizeStation = (stationId) => {
+  onVisualizeStation = (station) => {
     this.setState({
-      visualizedStation: stationId
+      visualizedStation: station
     })
+  }
+
+  onCenterStation = (station) => {
+    this.onCloseClusterModal()
+    this.setState({mapProps: {
+      center: {lat: station.lat, lng: station.lng},
+      zoom: 15,
+    }})
   }
 
   onClusterClick = (cluster) => {
@@ -73,8 +81,8 @@ class StationMap extends React.Component {
   render() {
     if (this.state.visualizedStation) {
       return (
-        <StationVisualization
-          stationId={this.state.visualizedStation}
+        <StationVisualizationLayout
+          station={this.state.visualizedStation}
           onClose={() => { this.setState({ visualizedStation: null }) }}
         />
       )
@@ -107,6 +115,7 @@ class StationMap extends React.Component {
         </GoogleMapReact>
         <MapSideBar />
         <StationListModal
+          onCenterStation={this.onCenterStation}
           onClose={this.onCloseClusterModal}
           onVisualizeStation={this.onVisualizeStation}
           stations={this.state.focusedStations ? this.state.focusedStations : []}

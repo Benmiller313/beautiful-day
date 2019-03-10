@@ -6,6 +6,7 @@ import StationList from '../StationList';
 
 class StationListModal extends React.Component {
   static propTypes = {
+    onCenterStation: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     onVisualizeStation: PropTypes.func.isRequired,
     stations: PropTypes.array,
@@ -38,6 +39,7 @@ class StationListModal extends React.Component {
         width={'80%'}
       >
         <StationList 
+          onCenterStation={this.props.onCenterStation}
           onSeeMore={this.onSeeMore}
           onVisualizeStation={this.props.onVisualizeStation}
           page={this.state.page}

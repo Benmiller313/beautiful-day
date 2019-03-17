@@ -30,6 +30,10 @@ class StationListModal extends React.Component {
   }
 
   render() {
+    if (!this.props.visible) {
+      return null
+    }
+
     return (
       <Modal
         visible={this.props.visible}

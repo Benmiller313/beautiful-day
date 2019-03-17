@@ -110,6 +110,8 @@ def load_stations():
         for row in reader:
             print row
             station, _ = Station.objects.get_or_create(source=Station.CANADIAN_GOVERNMENT, station_id=row[STATION_ID])
+            if station.has_daily_data:
+                continue
             station.name = row[NAME]
             station.latitude = row[LATITUDE]
             station.longitude = row[LONGITUDE]

@@ -33,3 +33,8 @@ class DailyRecord(models.Model):
     snow = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     total_percipitation = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     snow_on_ground = models.DecimalField(max_digits=5, decimal_places=2, null=True)
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['station', 'date'])
+        ]

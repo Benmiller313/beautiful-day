@@ -53,8 +53,9 @@ def aggregatedData(request, station_id):
 
 def _generate_column_names(stations):
     return [
-        '{name}.max_temp, {name}.min_temp, {name}.mean_temp'.format(
+        '{name}_{id}.max_temp, {name}_{id}.min_temp, {name}_{id}.mean_temp'.format(
             name=station.name.replace(' ', '_'),
+            id=station.id
         ) for station in stations
     ]
 
@@ -66,7 +67,7 @@ def _generate_combined_stations_sql(stations):
     station_columns = _generate_column_names(stations)
 
     joins = [
-        'LEFT JOIN weather_dailyrecord {name} on dates.dates={name}.date and {name}.station_id={id}'.format(
+        'LEFT JOIN weather_dailyrecord {name}_{id} on dates.dates={name}_{id}.date and {name}_{id}.station_id={id}'.format(
             name=station[0],
             id=station[1],
         ) for station in station_names
@@ -107,6 +108,17 @@ def aggregateCombinedStations(request):
             writer.writerow(row)
 
     return response
+
+
+def rawDailyValues(request, station_id):
+    queryset = Station.objects.all()
+    station = get_object_or_404(queryset, pk=station_id)
+
+    sql = _generate_combined_stations_sql([station])
+
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        return JsonResponse(data={'data': [cursor.fetchall()]})
 
 
 def stationGraph(request, station_id):

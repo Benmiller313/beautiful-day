@@ -54,13 +54,13 @@ def aggregatedData(request, station_id):
 def _generate_column_names(stations):
     return [
         '{name}_{id}.max_temp, {name}_{id}.min_temp, {name}_{id}.mean_temp'.format(
-            name=station.name.replace(' ', '_').replace('.', '').replace('/', ''),
+            name=station.name.replace(' ', '_').replace('.', '').replace('/', '').replace('-', ''),
             id=station.id
         ) for station in stations
     ]
 
 def _generate_combined_stations_sql(stations):
-    station_names = [(station.name.replace(' ', '_').replace('.', '').replace('/', ''), station.id) for station in stations]
+    station_names = [(station.name.replace(' ', '_').replace('.', '').replace('/', '').replace('-', ''), station.id) for station in stations]
     date_from = min([station.data_start for station in stations])
     date_to = max([station.data_end for station in stations])
 

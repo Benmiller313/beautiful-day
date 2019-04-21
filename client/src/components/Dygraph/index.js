@@ -16,7 +16,7 @@ class WrapperDygraph extends React.Component {
 
   componentDidMount() {
     new Dygraph(this.refs.chart, this.props.data, {
-      labels: ["Date", "Max Temp"]
+      labels: this.props.labels,
     })
   }
 

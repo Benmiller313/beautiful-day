@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { Button, Menu } from 'antd'
 
 import AllYearsGraph from '../AllYearsGraph'
-
+import CombinedAllYearsGraph from '../CombinedAllYearsGraph'
 import {
   StationVisualizationContainer,
   Header,
@@ -14,7 +14,7 @@ import {
 
 class StationVisualizationLayout extends React.Component {  
   static propTypes = {
-    station: PropTypes.object.isRequired,
+    stations: PropTypes.array.isRequired,
   }
 
   state = {
@@ -24,11 +24,13 @@ class StationVisualizationLayout extends React.Component {
   getSelectedVisualization = () => {
     switch (this.state.selectedVisualization) {
       case 'allYears':
-        return (
+        return this.props.stations.length === 1 ? (
           <AllYearsGraph 
-            stationId={this.props.station.id}
+            stationId={this.props.stations[0].id}
           />
-        )
+        ) : <CombinedAllYearsGraph
+              stations={this.props.stations}
+            />
       case 'compareYears':
         return (
           <p>Coming Soon</p>
@@ -46,7 +48,7 @@ class StationVisualizationLayout extends React.Component {
     return (
       <StationVisualizationContainer>
         <Header>
-          <h1>{this.props.station.name}</h1>
+          <h1>{this.props.stations[0].name}{this.props.stations.length > 1 ? ` And ${this.props.stations.length - 1} More`: ''}</h1>
           <Button
             style={{float:'right'}}
             type="primary"

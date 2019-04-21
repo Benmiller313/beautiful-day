@@ -8,6 +8,7 @@ class StationListModal extends React.Component {
   static propTypes = {
     onCenterStation: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
+    onVisualizeCombinedStations: PropTypes.func.isRequired,
     onVisualizeStation: PropTypes.func.isRequired,
     stations: PropTypes.array,
     visible: PropTypes.bool.isRequired,
@@ -45,6 +46,7 @@ class StationListModal extends React.Component {
         <StationList 
           onCenterStation={this.props.onCenterStation}
           onSeeMore={this.onSeeMore}
+          onVisualizeCombinedStations={this.props.onVisualizeCombinedStations}
           onVisualizeStation={this.props.onVisualizeStation}
           page={this.state.page}
           stations={this.props.stations}

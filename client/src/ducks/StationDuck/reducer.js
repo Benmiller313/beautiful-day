@@ -2,9 +2,11 @@ import {
   FETCH_STATIONS_SUCCESS,
   SET_STATION_FILTER,
   FETCH_STATION_GRAPH_ALL_SUCCESS,
+  FETCH_COMBINED_GRAPH_SUCCESS,
 } from './actions'
 
 const defaultState = {
+  combinedGraphData: {},
   stationList: null,
   stationGraphData: {},
   filters: {
@@ -26,6 +28,14 @@ export default function stationReducer(state=defaultState, action){
         stationGraphData: {
           ...state.stationGraphData,
           [action.payload.stationId]: action.payload.data.map(row => [new Date(row[0]), parseFloat(row[1])]),
+        }
+      }
+    case FETCH_COMBINED_GRAPH_SUCCESS:
+      return {
+        ...state,
+        combinedGraphData: {
+          ...state.combinedGraphData,
+          [action.payload.stationIds]: action.payload.data.map(row => [new Date(row.shift()), ...row.map(parseFloat)])
         }
       }
     case SET_STATION_FILTER:

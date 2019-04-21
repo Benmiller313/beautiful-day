@@ -18,6 +18,7 @@ class StationList extends React.Component {
   static propTypes = {
     onCenterStation: PropTypes.func.isRequired,
     onSeeMore: PropTypes.func.isRequired,
+    onVisualizeCombinedStations: PropTypes.func.isRequired,
     onVisualizeStation: PropTypes.func.isRequired,
     page: PropTypes.number,
     stations: PropTypes.array.isRequired,
@@ -46,6 +47,12 @@ class StationList extends React.Component {
           >
             download combined data
           </DonwloadCombinedLink>
+          <a
+                key={'viz'}
+                onClick={() => this.props.onVisualizeCombinedStations(this.props.stations.filter(station => checkedStations[station.id]))}
+              >
+                visualize
+          </a>
         </GroupStationPanel>
       )
     } else {

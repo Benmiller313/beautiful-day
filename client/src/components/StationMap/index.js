@@ -5,6 +5,7 @@ import GoogleMapReact from 'google-map-react'
 import supercluster from 'points-cluster'
 import memoize from 'memoize-one'
 
+import CombinedStationVizLayout from '../CombinedStationVizLayout'
 import MapPin from '../MapPin'
 import StationPin from '../StationPin'
 import { fetchStations } from '../../ducks/StationDuck/actions'
@@ -34,6 +35,7 @@ class StationMap extends React.Component {
       },
       clusters: [],
       visualizedStation: null,
+      combinedStations: null,
     }
   }
 
@@ -60,6 +62,13 @@ class StationMap extends React.Component {
     })
   }
 
+  onVisualizeCombinedStations = (stations) => {
+    console.log(stations)
+    this.setState({
+      combinedStations: stations,
+    })
+  }
+
   onCenterStation = (station) => {
     this.onCloseClusterModal()
     this.setState({mapProps: {
@@ -82,8 +91,17 @@ class StationMap extends React.Component {
     if (this.state.visualizedStation) {
       return (
         <StationVisualizationLayout
-          station={this.state.visualizedStation}
+          stations={[this.state.visualizedStation]}
           onClose={() => { this.setState({ visualizedStation: null }) }}
+        />
+      )
+    }
+
+    if (this.state.combinedStations) {
+      return (
+        <StationVisualizationLayout
+          stations={this.state.combinedStations}
+          onClose={() => { this.setState({ combinedStations: null })}}
         />
       )
     }
@@ -117,6 +135,7 @@ class StationMap extends React.Component {
         <StationListModal
           onCenterStation={this.onCenterStation}
           onClose={this.onCloseClusterModal}
+          onVisualizeCombinedStations={this.onVisualizeCombinedStations}
           onVisualizeStation={this.onVisualizeStation}
           stations={this.state.focusedStations ? this.state.focusedStations : []}
           visible={this.state.focusedStations !== null}

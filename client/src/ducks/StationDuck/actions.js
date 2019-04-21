@@ -4,6 +4,8 @@ export const FETCH_STATIONS_ERROR = 'FETCH_STATIONS_ERROR'
 export const SET_STATION_FILTER = 'SET_STATION_FILTER'
 export const FETCH_STATION_GRAPH_ALL = 'FETCH_STATION_GRAPH_ALL'
 export const FETCH_STATION_GRAPH_ALL_SUCCESS = 'FETCH_STATION_GRAPH_ALL_SUCCESS'
+export const FETCH_COMBINED_GRAPH = 'FETCH_COMBINED_GRAPH'
+export const FETCH_COMBINED_GRAPH_SUCCESS = 'FETCH_COMBINED_GRAPH_SUCCESS'
 
 export const fetchStations = () => ({
     type: FETCH_STATIONS
@@ -31,5 +33,15 @@ export const fetchStationGraphAll = (stationId) => ({
 
 export const fetchStationGraphAllSuccess = (data) => ({
     type: FETCH_STATION_GRAPH_ALL_SUCCESS,
+    payload: data,
+})
+
+export const fetchCombinedGraph = (stations) => ({
+    type: FETCH_COMBINED_GRAPH,
+    payload: stations,
+})
+
+export const fetchCombinedGraphSuccess = (data) => ({
+    type: FETCH_COMBINED_GRAPH_SUCCESS,
     payload: data,
 })

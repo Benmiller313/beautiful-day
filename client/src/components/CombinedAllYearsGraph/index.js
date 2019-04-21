@@ -4,18 +4,18 @@ import { connect } from 'react-redux'
 
 import { BeatLoader } from 'react-spinners';
 
-import { fetchStationGraphAll } from '../../ducks/StationDuck/actions'
+import { fetchCombinedGraph } from '../../ducks/StationDuck/actions'
 import Dygraph from '../Dygraph'
 
-class AllYearsGraph extends React.Component {
+class CombinedAllYearsGraph extends React.Component {
   static propTypes = {
     data: PropTypes.array,
-    stationId: PropTypes.string.isRequired,
-    fetchStationGraphAll: PropTypes.func.isRequired,
+    stations: PropTypes.string.isRequired,
+    fetchCombinedGraph: PropTypes.func.isRequired,
   }
 
   componentDidMount() {
-    this.props.fetchStationGraphAll(this.props.stationId)
+    this.props.fetchCombinedGraph(this.props.stations)
   }
 
   render() {
@@ -32,23 +32,21 @@ class AllYearsGraph extends React.Component {
     return (
       <Dygraph 
         data={this.props.data}
-        labels={["Date", "Max Temp"]}
+        labels={["Date", ...this.props.stations.map(station => `${station.name} Max`)]}
       />
     )
   }
 }
 
 const mapStateToProps = (state, ownProps) => ({
-  data: state.stations.stationGraphData[ownProps.stationId],
+  data: state.stations.combinedGraphData[ownProps.stations.map(station => station.id).join('_')],
 })
 
-const mapDispatchToProps = dispatch => ({
-  fetchStationGraphAll: (stationId) => {
-    dispatch(fetchStationGraphAll(stationId))
-  }
-})
+const mapDispatchToProps = {
+  fetchCombinedGraph: fetchCombinedGraph
+}
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(AllYearsGraph)
+)(CombinedAllYearsGraph)

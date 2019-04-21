@@ -6,6 +6,8 @@ import {
   FETCH_STATIONS_ERROR,
   FETCH_STATION_GRAPH_ALL,
   FETCH_STATION_GRAPH_ALL_SUCCESS,
+  FETCH_COMBINED_GRAPH,
+  FETCH_COMBINED_GRAPH_SUCCESS,
 } from './actions'
 
 
@@ -41,6 +43,10 @@ function fetchGraphAllFromAPI(stationId) {
   })
 }
 
+function fetchCombinedFromAPI(stations) {
+  return axios.get(`weather/stations/graphcombined?station_ids=${stations.map(station => station.id).join(',')}&columns=max`)
+}
+
 function* fetchGraphAllWorker(action) {
   try {
     const response = yield call(fetchGraphAllFromAPI, action.payload)
@@ -53,7 +59,21 @@ function* fetchGraphAllWorker(action) {
   }
 }
 
+function* fetchCombinedGraphWorker(action) {
+  try {
+    const response = yield call(fetchCombinedFromAPI, action.payload)
+    yield put({
+      type: FETCH_COMBINED_GRAPH_SUCCESS,
+      payload: { data: response.data.data, stationIds: action.payload.map(station => station.id).join('_')},
+    })
+  } catch (error) {
+    console.log(error)
+  }
+
+}
+
 export function* watchStationAsync() {
   yield takeEvery(FETCH_STATIONS, fetchWorker)
   yield takeLatest(FETCH_STATION_GRAPH_ALL, fetchGraphAllWorker)
+  yield takeLatest(FETCH_COMBINED_GRAPH, fetchCombinedGraphWorker)
 }

@@ -12,6 +12,7 @@ urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^', include(router.urls)),
     url(r'^stations/aggregatecombined', views.aggregateCombinedStations),
+    url(r'^stations/graphcombined', views.combinedGraph),
     url(r'^stations/(?P<station_id>[0-9]+)/aggregated', views.aggregatedData),
     url(r'^stations/(?P<station_id>[0-9]+)/graph', views.stationGraph),
     url(r'^stations/(?P<station_id>[0-9]+)/rawtemp', views.rawDailyValues),

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 import csv
+import re
 
 from django.db import connection
 from django.http import HttpResponse, JsonResponse, Http404
@@ -51,20 +52,28 @@ def aggregatedData(request, station_id):
     return response
 
 
-def _generate_column_names(stations):
+def _generate_column_names(stations, columns=['max', 'min', 'mean']):
+    names = []
+    if 'max' in columns:
+        names.append('{name}_{id}.max_temp')
+    if 'min' in columns:
+        names.append('{name}_{id}.min_temp')
+    if 'mean' in columns:
+        names.append('{name}_{id}.mean_temp')
+    template = ', '.join(names)
     return [
-        '{name}_{id}.max_temp, {name}_{id}.min_temp, {name}_{id}.mean_temp'.format(
-            name=station.name.replace(' ', '_').replace('.', '').replace('/', '').replace('-', ''),
+        template.format(
+            name=re.sub('[\W_]+', '', station.name),
             id=station.id
         ) for station in stations
     ]
 
-def _generate_combined_stations_sql(stations):
-    station_names = [(station.name.replace(' ', '_').replace('.', '').replace('/', '').replace('-', ''), station.id) for station in stations]
+def _generate_combined_stations_sql(stations, columns=['max', 'min', 'mean']):
+    station_names = [(re.sub('[\W_]+', '', station.name), station.id) for station in stations]
     date_from = min([station.data_start for station in stations])
     date_to = max([station.data_end for station in stations])
 
-    station_columns = _generate_column_names(stations)
+    station_columns = _generate_column_names(stations, columns)
 
     joins = [
         'LEFT JOIN weather_dailyrecord {name}_{id} on dates.dates={name}_{id}.date and {name}_{id}.station_id={id}'.format(
@@ -128,3 +137,16 @@ def stationGraph(request, station_id):
     formatted = [[record.date, record.max_temp] for record in station.dailyrecord_set.all().order_by('date')]
 
     return JsonResponse(data={'data': formatted})
+
+def combinedGraph(request):
+    station_ids = request.GET.get('station_ids', '').split(',')
+    columns = request.GET.get('columns', '').split(',')
+    stations = Station.objects.filter(id__in=station_ids)
+    if stations.count() < 1:
+        raise Http404('Stations do not exist')
+
+    sql = _generate_combined_stations_sql(stations, columns)
+    with connection.cursor() as cursor:
+        cursor.execute(sql)
+        rows = cursor.fetchall()
+        return JsonResponse(data={'data': rows})

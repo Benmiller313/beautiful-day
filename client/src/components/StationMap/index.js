@@ -5,7 +5,6 @@ import GoogleMapReact from 'google-map-react'
 import supercluster from 'points-cluster'
 import memoize from 'memoize-one'
 
-import CombinedStationVizLayout from '../CombinedStationVizLayout'
 import MapPin from '../MapPin'
 import StationPin from '../StationPin'
 import { fetchStations } from '../../ducks/StationDuck/actions'

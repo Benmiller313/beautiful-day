@@ -28,7 +28,7 @@ export const Sidebar = styled.div`
 
 export const Content = styled.div`
     grid-area: content;
-    padding: 10px;
+    padding: 30px 50px 30px 30px;
 `
 
     

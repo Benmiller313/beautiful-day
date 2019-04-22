@@ -19,6 +19,11 @@ class WrapperDygraph extends React.Component {
       labels: this.props.labels,
     })
   }
+  componentDidUpdate() {
+    new Dygraph(this.refs.chart, this.props.data, {
+      labels: this.props.labels,
+    })
+  }
 
   render() {
     return (

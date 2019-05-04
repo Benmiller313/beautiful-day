@@ -4,6 +4,7 @@ import { Button } from 'antd'
 
 import FloatingMenuButton from '../FloatingMenuButton'
 import MapFilter from '../MapFilter'
+import ProjectSelect from '../ProjectSelect'
 
 const SidebarDiv = styled.div`
   position: absolute;
@@ -41,6 +42,7 @@ class MapSidebar extends React.PureComponent {
           icon="close"
           onClick={() => this.onSetSidebarOpen(false)}
         />
+        <ProjectSelect />
         <MapFilter />
       </SidebarDiv>
     )

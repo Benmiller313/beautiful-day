@@ -22,6 +22,9 @@ class Station(models.Model):
     daily_temp_count = models.IntegerField(null=True)
     daily_percip_count = models.IntegerField(null=True)
 
+    def __unicode__(self):
+        return '{}: {}'.format(self.station_id, self.name)
+
 
 class DailyRecord(models.Model):
     station = models.ForeignKey(Station)
@@ -38,3 +41,21 @@ class DailyRecord(models.Model):
         indexes = [
             models.Index(fields=['station', 'date'])
         ]
+
+
+class Project(models.Model):
+    name = models.CharField(max_length=256)
+    description = models.TextField()
+
+    def __unicode__(self):
+        return self.name
+
+
+class ProjectGrouping(models.Model):
+    name = models.CharField(max_length=256)
+    stations = models.ManyToManyField(Station)
+    project = models.ForeignKey(Project, related_name='groupings')
+    description = models.TextField()
+
+    def __unicode__(self):
+        return "{}: {}".format(self.project.name, self.name)

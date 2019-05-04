@@ -21,7 +21,7 @@ class MapFilter extends React.PureComponent {
 
   render() {
     return (
-      <div>
+      <div>        
         <Divider orientation="left">Filter Stations</Divider>
         <AggregateRadio onChange={this.setFilter} defaultValue={this.props.filters.aggregatedData ? 'aggregated' : 'all'} buttonStyle={'solid'}>
           <Radio.Button value='all'>All</Radio.Button>

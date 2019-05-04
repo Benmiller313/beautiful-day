@@ -9,8 +9,9 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework import viewsets
 
-from weather.models import Station
-from weather.serializers import StationSerializer
+from weather.models import Project, Station
+from weather.serializers import StationSerializer, ProjectSerializer
+
 
 def index(request):
     return HttpResponse('Hello, World!')
@@ -20,13 +21,10 @@ class StationViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Station.objects.all()
     serializer_class = StationSerializer
 
-class Echo:
-    """An object that implements just the write method of the file-like
-    interface.
-    """
-    def write(self, value):
-        """Write the value by returning it, instead of storing in a buffer."""
-        return value
+
+class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Project.objects.all()
+    serializer_class = ProjectSerializer
 
 
 def aggregatedData(request, station_id):

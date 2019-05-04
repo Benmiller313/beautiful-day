@@ -8,6 +8,8 @@ import {
   FETCH_STATION_GRAPH_ALL_SUCCESS,
   FETCH_COMBINED_GRAPH,
   FETCH_COMBINED_GRAPH_SUCCESS,
+  FETCH_PROJECTS,
+  fetchProjectsSuccess,
 } from './actions'
 
 
@@ -16,6 +18,10 @@ function fetchStationsFromAPI() {
     method: "get",
     url: '/weather/stations/'
   })
+}
+
+function fetchProjectsFromAPI() {
+  return axios.get('/weather/project/')
 }
 
 function* fetchWorker() {
@@ -34,6 +40,12 @@ function* fetchWorker() {
       error,
     })
   }
+}
+
+function* fetchProjectsWorker() {
+  const response = yield call(fetchProjectsFromAPI)
+  const projects = response.data
+  yield put(fetchProjectsSuccess(projects))
 }
 
 function fetchGraphAllFromAPI(stationId) {
@@ -69,11 +81,11 @@ function* fetchCombinedGraphWorker(action) {
   } catch (error) {
     console.log(error)
   }
-
 }
 
 export function* watchStationAsync() {
   yield takeEvery(FETCH_STATIONS, fetchWorker)
+  yield takeEvery(FETCH_PROJECTS, fetchProjectsWorker)
   yield takeLatest(FETCH_STATION_GRAPH_ALL, fetchGraphAllWorker)
   yield takeLatest(FETCH_COMBINED_GRAPH, fetchCombinedGraphWorker)
 }

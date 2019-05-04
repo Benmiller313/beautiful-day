@@ -7,7 +7,7 @@ import memoize from 'memoize-one'
 
 import MapPin from '../MapPin'
 import StationPin from '../StationPin'
-import { fetchStations } from '../../ducks/StationDuck/actions'
+import { fetchStations, fetchProjects } from '../../ducks/StationDuck/actions'
 import { selectFilteredStations } from '../../ducks/StationDuck/selectors'
 import MapSideBar from '../MapSidebar'
 import StationListModal from '../StationListModal';
@@ -15,8 +15,8 @@ import StationVisualizationLayout from '../StationVisualizationLayout';
 
 class StationMap extends React.Component {
   static propTypes = {
-    fetchStations: PropTypes.func,
     geolocation: PropTypes.object,
+    selectedProject: PropTypes.object,
     stations: PropTypes.array,
   }
 
@@ -86,6 +86,66 @@ class StationMap extends React.Component {
     this.setState({ focusedStations: null })
   }
 
+  averageGeolocation(coords) {
+    if (coords.length === 1) {
+      return {
+        wy: coords[0].latitude,
+        wx: coords[0].longitude,
+      }
+    }
+  
+    let x = 0.0;
+    let y = 0.0;
+    let z = 0.0;
+  
+    for (let coord of coords) {
+      let latitude = coord.latitude * Math.PI / 180;
+      let longitude = coord.longitude * Math.PI / 180;
+  
+      x += Math.cos(latitude) * Math.cos(longitude);
+      y += Math.cos(latitude) * Math.sin(longitude);
+      z += Math.sin(latitude);
+    }
+  
+    let total = coords.length;
+  
+    x = x / total;
+    y = y / total;
+    z = z / total;
+  
+    let centralLongitude = Math.atan2(y, x);
+    let centralSquareRoot = Math.sqrt(x * x + y * y);
+    let centralLatitude = Math.atan2(z, centralSquareRoot);
+  
+    return {
+      wy: centralLatitude * 180 / Math.PI,
+      wx: centralLongitude * 180 / Math.PI
+    };
+  }
+  
+
+
+  createProjectClusters = () => {
+    const project = this.props.selectedProject
+    return project.groupings.map(group => {
+      const coords = this.averageGeolocation(group.stations)
+      coords.numPoints = group.stations.length
+      coords.points = group.stations
+      return coords
+    })
+
+  }
+
+  getClusters = () => {
+    if (this.props.selectedProject) {
+      return this.createProjectClusters()
+    }
+    const generateClusters = this.generateSuperCluster(this.props.stations)
+    return this.state.mapProps.bounds ? generateClusters(
+      this.state.mapProps
+    ) : []
+  }
+
   render() {
     if (this.state.visualizedStation) {
       return (
@@ -105,10 +165,8 @@ class StationMap extends React.Component {
       )
     }
 
-    const getClusters = this.generateSuperCluster(this.props.stations)
-    const clusters = this.state.mapProps.bounds ? getClusters(
-      this.state.mapProps
-    ) : []
+    const clusters = this.getClusters()
+    console.log(clusters)
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <GoogleMapReact
@@ -146,13 +204,9 @@ class StationMap extends React.Component {
 
 const mapStateToProps = (state) => ({
   stations: selectFilteredStations(state),
+  selectedProject: state.stations.selectedProject,
   geolocation: state.geolocation.geolocation,
 })
 
-const mapDispatchToProps = (dispatch) => ({
-  fetchStations: () => {
-    dispatch(fetchStations())
-  }
-})
 
-export default connect(mapStateToProps, mapDispatchToProps)(StationMap)
+export default connect(mapStateToProps, {})(StationMap)

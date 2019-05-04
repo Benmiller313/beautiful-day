@@ -3,10 +3,14 @@ import {
   SET_STATION_FILTER,
   FETCH_STATION_GRAPH_ALL_SUCCESS,
   FETCH_COMBINED_GRAPH_SUCCESS,
+  FETCH_PROJECTS_SUCCESS,
+  SET_SELECTED_PROJECT,
 } from './actions'
 
 const defaultState = {
   combinedGraphData: {},
+  projects: [],
+  selectedProject: null,
   stationList: null,
   stationGraphData: {},
   yearGraphData: {},
@@ -22,6 +26,11 @@ export default function stationReducer(state=defaultState, action){
       return {
         ...state,
         stationList: action.payload.map(value => ({...value, lat: parseFloat(value.latitude), lng: parseFloat(value.longitude)}))
+      }
+    case FETCH_PROJECTS_SUCCESS:
+      return {
+        ...state,
+        projects: action.payload
       }
     case FETCH_STATION_GRAPH_ALL_SUCCESS:
       return {
@@ -59,6 +68,11 @@ export default function stationReducer(state=defaultState, action){
           ...state.filters,
           ...action.payload
         },
+      }
+    case SET_SELECTED_PROJECT:
+      return {
+        ...state,
+        selectedProject: action.payload
       }
     default:
       return state;

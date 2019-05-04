@@ -6,7 +6,7 @@ import { BrowserRouter } from 'react-router-dom'
 
 
 import StationMap from '../../components/StationMap'
-import { fetchStations } from '../../ducks/StationDuck/actions'
+import { fetchStations, fetchProjects } from '../../ducks/StationDuck/actions'
 import { fetchGeolocation } from '../../ducks/GeolocationDuck/actions'
 import { BRAND_BLUE } from '../../constants/style'
 import { selectFilteredStations } from '../../ducks/StationDuck/selectors';
@@ -33,6 +33,7 @@ const StyledBeatLoader = styled(BeatLoader)`
 class UnconnectedAppLayout extends React.Component {
 
   componentDidMount() {
+    this.props.fetchProjects()
     this.props.fetchStations()
     this.props.fetchGeolocation()
   }
@@ -63,14 +64,11 @@ const mapStateToProps = (state) => ({
   geolocation: state.geolocation,
 })
 
-const mapDispatchToProps = (dispatch) => ({
-  fetchStations: () => {
-    dispatch(fetchStations())
-  },
-  fetchGeolocation: () => {
-    dispatch(fetchGeolocation())
-  }
-})
+const mapDispatchToProps = {
+  fetchProjects,
+  fetchStations,
+  fetchGeolocation,
+}
 
 
 export default connect(mapStateToProps, mapDispatchToProps)(UnconnectedAppLayout)

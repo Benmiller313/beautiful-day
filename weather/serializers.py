@@ -29,6 +29,8 @@ class ProjectGroupingSerializer(serializers.ModelSerializer):
             'name',
             'stations',
             'description',
+            'trend_line_low',
+            'trend_line_high',
         )
 
 

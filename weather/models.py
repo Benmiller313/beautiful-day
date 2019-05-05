@@ -56,6 +56,8 @@ class ProjectGrouping(models.Model):
     stations = models.ManyToManyField(Station)
     project = models.ForeignKey(Project, related_name='groupings')
     description = models.TextField()
+    trend_line_high = models.IntegerField(null=True)
+    trend_line_low = models.IntegerField(null=True)
 
     def __unicode__(self):
         return "{}: {}".format(self.project.name, self.name)

@@ -1,10 +1,12 @@
 import React from 'react'
 import styled from 'styled-components'
+import { connect } from 'react-redux'
 import { Button } from 'antd'
 
 import FloatingMenuButton from '../FloatingMenuButton'
 import MapFilter from '../MapFilter'
 import ProjectSelect from '../ProjectSelect'
+import { clearSelectedProject } from '../../ducks/StationDuck/actions'
 
 const SidebarDiv = styled.div`
   position: absolute;
@@ -13,6 +15,10 @@ const SidebarDiv = styled.div`
   background-color: white;
   padding: 10px;
   width: 300px;
+`
+
+const ClearButtonWrapper = styled.div`
+  padding: 20px 10px;
 `
 
 class MapSidebar extends React.PureComponent {
@@ -43,7 +49,13 @@ class MapSidebar extends React.PureComponent {
           onClick={() => this.onSetSidebarOpen(false)}
         />
         <ProjectSelect />
-        <MapFilter />
+        { this.props.selectedProject ? (
+          <ClearButtonWrapper>
+            <Button onClick={this.props.clearSelectedProject}>
+              Show All Stations
+            </Button>
+          </ClearButtonWrapper>
+        ) : <MapFilter /> }
       </SidebarDiv>
     )
   }
@@ -58,4 +70,12 @@ class MapSidebar extends React.PureComponent {
   }
 }
 
-export default MapSidebar
+const mapStateToProps = (state) => ({
+  selectedProject: state.stations.selectedProject,
+})
+
+const mapDispatchToProps = {
+  clearSelectedProject,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MapSidebar)

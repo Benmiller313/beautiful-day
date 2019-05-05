@@ -12,6 +12,7 @@ import { selectFilteredStations } from '../../ducks/StationDuck/selectors'
 import MapSideBar from '../MapSidebar'
 import StationListModal from '../StationListModal';
 import StationVisualizationLayout from '../StationVisualizationLayout';
+import ProjectDescriptionModal from '../ProjectDescriptionModal';
 
 class StationMap extends React.Component {
   static propTypes = {
@@ -62,7 +63,6 @@ class StationMap extends React.Component {
   }
 
   onVisualizeCombinedStations = (stations) => {
-    console.log(stations)
     this.setState({
       combinedStations: stations,
     })
@@ -76,10 +76,23 @@ class StationMap extends React.Component {
     }})
   }
 
+  onCenterProject = () => {
+    const groups = this.createProjectClusters()
+    const projectCenter = this.averageGeolocation(groups)
+    this.setState({mapProps: {
+      ...this.state.mapProps,
+      center: {lat: projectCenter.wy, lng: projectCenter.wx},
+    }})
+  }
+
   onClusterClick = (cluster) => {
-    this.setState({ focusedStations: cluster.points.sort(((a, b) => {
-      return b.daily_record_count - a.daily_record_count
-    }))})
+    if (this.props.selectedProject) {
+      this.onVisualizeCombinedStations(cluster.points)
+    } else {
+      this.setState({ focusedStations: cluster.points.sort(((a, b) => {
+        return b.daily_record_count - a.daily_record_count
+      }))})
+    }
   }
 
   onCloseClusterModal = () => {
@@ -91,6 +104,8 @@ class StationMap extends React.Component {
       return {
         wy: coords[0].latitude,
         wx: coords[0].longitude,
+        latitude: coords[0].latitude,
+        longitude: coords[0].longitude,
       }
     }
   
@@ -119,7 +134,9 @@ class StationMap extends React.Component {
   
     return {
       wy: centralLatitude * 180 / Math.PI,
-      wx: centralLongitude * 180 / Math.PI
+      wx: centralLongitude * 180 / Math.PI,
+      latitude: centralLatitude * 180 / Math.PI,
+      longitude: centralLongitude * 180 / Math.PI,
     };
   }
   
@@ -152,6 +169,7 @@ class StationMap extends React.Component {
         <StationVisualizationLayout
           stations={[this.state.visualizedStation]}
           onClose={() => { this.setState({ visualizedStation: null }) }}
+          project={this.props.selectedProject}
         />
       )
     }
@@ -161,6 +179,7 @@ class StationMap extends React.Component {
         <StationVisualizationLayout
           stations={this.state.combinedStations}
           onClose={() => { this.setState({ combinedStations: null })}}
+          project={this.props.selectedProject}
         />
       )
     }
@@ -196,6 +215,9 @@ class StationMap extends React.Component {
           onVisualizeStation={this.onVisualizeStation}
           stations={this.state.focusedStations ? this.state.focusedStations : []}
           visible={this.state.focusedStations !== null}
+        />
+        <ProjectDescriptionModal 
+          centerMap={this.onCenterProject}
         />
       </div>
     )

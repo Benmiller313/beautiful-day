@@ -15,6 +15,11 @@ import CompareYearsGraph from '../CompareYearsGraph';
 class StationVisualizationLayout extends React.Component {  
   static propTypes = {
     stations: PropTypes.array.isRequired,
+    project: PropTypes.object,
+  }
+  
+  static defaultProps = {
+    project: null,
   }
 
   state = {
@@ -26,7 +31,8 @@ class StationVisualizationLayout extends React.Component {
       case 'allYears':
         return <CombinedAllYearsGraph
               stations={this.props.stations}
-            />
+              project={this.props.project}
+              />
       case 'compareYears':
         return (
           <CompareYearsGraph

@@ -9,6 +9,9 @@ export const FETCH_STATION_GRAPH_ALL_SUCCESS = 'FETCH_STATION_GRAPH_ALL_SUCCESS'
 export const FETCH_COMBINED_GRAPH = 'FETCH_COMBINED_GRAPH'
 export const FETCH_COMBINED_GRAPH_SUCCESS = 'FETCH_COMBINED_GRAPH_SUCCESS'
 export const SET_SELECTED_PROJECT = 'SET_SELECTED_PROJECT'
+export const CLEAR_SELECTED_PROJECT = 'CLEAR_SELECTED_PROJECT'
+export const SHOW_PROJECT_MODAL = 'SHOW_PROJECT_MODAL'
+export const CLOSE_PROJECT_MODAL = 'CLOSE_PROJECT_MODAL'
 
 export const fetchStations = () => ({
     type: FETCH_STATIONS
@@ -61,4 +64,17 @@ export const fetchCombinedGraphSuccess = (data) => ({
 export const setSelectedProject = (project) => ({
     type: SET_SELECTED_PROJECT,
     payload: project,
+})
+
+export const clearSelectedProject = () => ({
+    type: CLEAR_SELECTED_PROJECT,
+})
+
+export const showProjectModal = (project) => ({
+    type: SHOW_PROJECT_MODAL,
+    payload: project,
+})
+
+export const closeProjectModal = () => ({
+    type: CLOSE_PROJECT_MODAL,
 })

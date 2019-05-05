@@ -5,6 +5,9 @@ import {
   FETCH_COMBINED_GRAPH_SUCCESS,
   FETCH_PROJECTS_SUCCESS,
   SET_SELECTED_PROJECT,
+  SHOW_PROJECT_MODAL,
+  CLOSE_PROJECT_MODAL,
+  CLEAR_SELECTED_PROJECT,
 } from './actions'
 
 const defaultState = {
@@ -72,7 +75,23 @@ export default function stationReducer(state=defaultState, action){
     case SET_SELECTED_PROJECT:
       return {
         ...state,
-        selectedProject: action.payload
+        selectedProject: action.payload,
+        isProjectModalVisible: true,
+      }
+    case CLEAR_SELECTED_PROJECT:
+      return {
+        ...state,
+        selectedProject: null,
+      }
+    case SHOW_PROJECT_MODAL:
+      return {
+        ...state,
+        isProjectModalVisible: true,
+      }
+    case CLOSE_PROJECT_MODAL:
+      return {
+        ...state,
+        isProjectModalVisible: false,
       }
     default:
       return state;

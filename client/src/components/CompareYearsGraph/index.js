@@ -59,6 +59,7 @@ class CompareYearsGraph extends React.Component {
             ...this.props.stations.map(station => `${station.name} ${baseYear} Max`),
             ...this.props.stations.map(station => `${station.name} ${targetYear} Max`),
           ]}
+          title='Daily Maximum Temperate'
         />
         <YearToggleContainer>
           <YearText>Compare: {baseYear}</YearText>

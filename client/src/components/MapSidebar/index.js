@@ -25,7 +25,7 @@ class MapSidebar extends React.PureComponent {
   constructor(props) {
     super(props);
     this.state = {
-      sidebarOpen: false
+      sidebarOpen: true,
     };
     this.onSetSidebarOpen = this.onSetSidebarOpen.bind(this);
     this.getSidebar = this.getSidebar.bind(this)

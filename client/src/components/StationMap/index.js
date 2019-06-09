@@ -51,6 +51,7 @@ class StationMap extends React.Component {
   })
 
   onChange = (mapProps) => {
+    console.log('Map Zoom: ' + mapProps.zoom)
     this.setState({
       mapProps,
     })
@@ -79,9 +80,11 @@ class StationMap extends React.Component {
   onCenterProject = () => {
     const groups = this.createProjectClusters()
     const projectCenter = this.averageGeolocation(groups)
+    const projectZoom = this.props.selectedProject.default_zoom
     this.setState({mapProps: {
       ...this.state.mapProps,
       center: {lat: projectCenter.wy, lng: projectCenter.wx},
+      zoom: projectZoom ? projectZoom : 4
     }})
   }
 

@@ -46,6 +46,7 @@ class DailyRecord(models.Model):
 class Project(models.Model):
     name = models.CharField(max_length=256)
     description = models.TextField()
+    default_zoom = models.IntegerField(null=True, blank=True)
 
     def __unicode__(self):
         return self.name

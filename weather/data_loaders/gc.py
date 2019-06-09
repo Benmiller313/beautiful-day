@@ -22,7 +22,7 @@ def val_or_none(val):
     return val if val else None
 
 
-def load_daily(station):
+def load_daily(station, start_year=None, end_year=None):
     url = 'http://climate.weather.gc.ca/climate_data/bulk_data_e.html' \
           '?format=csv&stationID={station_id}&Year={year}&timeframe=2&submit=Download+Data'
 
@@ -47,9 +47,10 @@ def load_daily(station):
     SNOW_ON_GROUND = 21
 
     total = 0
-    year = station.data_start.year
+    year = start_year if start_year else station.data_start.year
+    year_to = end_year if end_year else station.data_end.year
     records = []
-    while (year <= station.data_end.year):
+    while (year <= year_to):
         print "Clearing Old Data"
         DailyRecord.objects.filter(station_id=station.id, date__year=year).delete()
         print "Downloading", year
@@ -149,3 +150,9 @@ def denormalize():
         station.daily_percip_count = aggregates['num_percip']
         station.save()
         print aggregates
+
+
+def load_stations_by_date(from_date, to_date):
+    stations = Station.objects.all()
+    for station in stations:
+        load_daily(station, from_date, to_date)

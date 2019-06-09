@@ -44,4 +44,5 @@ class ProjectSerializer(serializers.ModelSerializer):
             'name',
             'description',
             'groupings',
+            'default_zoom',
         )

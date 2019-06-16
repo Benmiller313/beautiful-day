@@ -23,8 +23,13 @@ class StationViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Project.objects.all()
     serializer_class = ProjectSerializer
+
+    def get_queryset(self):
+        print self.request.user
+        if self.request.user.is_authenticated():
+            return Project.objects.all()
+        return Project.objects.filter(private=False)
 
 
 def aggregatedData(request, station_id):

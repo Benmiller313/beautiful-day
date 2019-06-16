@@ -7,7 +7,7 @@ from weather import views
 
 router = routers.DefaultRouter()
 router.register(r'stations', views.StationViewSet)
-router.register(r'project', views.ProjectViewSet)
+router.register(r'project', views.ProjectViewSet, 'project')
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),

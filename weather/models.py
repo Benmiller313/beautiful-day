@@ -47,6 +47,7 @@ class Project(models.Model):
     name = models.CharField(max_length=256)
     description = models.TextField()
     default_zoom = models.IntegerField(null=True, blank=True)
+    private = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.name

@@ -30,6 +30,8 @@ class MapPin extends React.Component {
   static propTypes = {
     onClick: PropTypes.func,
     text: PropTypes.string,
+    onHoverEnter: PropTypes.func,
+    onHoverExit: PropTypes.func,
   }
 
   static defaultProps = {
@@ -38,13 +40,24 @@ class MapPin extends React.Component {
   }
 
   onClick = () => {
+    console.log('doing this')
     this.props.onClick(this.props.cluster)
+  }
+
+  onHoverEnter = () => {
+    this.props.onHoverEnter && this.props.onHoverEnter(this.props.cluster)
+  }
+
+  onHoverExit = () => {
+    this.props.onHoverExit && this.props.onHoverExit(this.props.cluster)
   }
 
   render() {
     return (
       <PinShape
         onClick={this.onClick}
+        onMouseEnter={this.onHoverEnter}
+        onMouseLeave={this.onHoverExit}
       >
         <div style={{ 'margin': 'auto' }}>{this.props.text}</div>
       </PinShape>

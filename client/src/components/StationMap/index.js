@@ -13,6 +13,7 @@ import MapSideBar from '../MapSidebar'
 import StationListModal from '../StationListModal';
 import StationVisualizationLayout from '../StationVisualizationLayout';
 import ProjectDescriptionModal from '../ProjectDescriptionModal';
+import ProjectPin from '../ProjectPin';
 
 class StationMap extends React.Component {
   static propTypes = {
@@ -29,6 +30,7 @@ class StationMap extends React.Component {
 
     this.state = {
       focusedStations: null,
+      hoveredProject: null, 
       mapProps: {
         center,
         zoom: 10,
@@ -96,6 +98,14 @@ class StationMap extends React.Component {
         return b.daily_record_count - a.daily_record_count
       }))})
     }
+  }
+
+  onStartHoverProjectCluster = (cluster) => {
+    this.setState({hoveredProject: cluster})
+  }
+
+  onEndHoverProjectCluster = () => {
+    this.setState({hoveredProject: null})
   }
 
   onCloseClusterModal = () => {
@@ -188,7 +198,6 @@ class StationMap extends React.Component {
     }
 
     const clusters = this.getClusters()
-    console.log(clusters)
     return (
       <div style={{ height: '100%', width: '100%' }}>
         <GoogleMapReact
@@ -205,10 +214,18 @@ class StationMap extends React.Component {
                 lat={cluster.wy}
                 lng={cluster.wx}
                 onClick={this.onClusterClick}
+                onHoverEnter={this.props.selectedProject ? this.onStartHoverProjectCluster: null}
+                onHoverExit={this.props.selectedProject ? this.onEndHoverProjectCluster: null}
                 text={`${cluster.numPoints}`}
               />
             ))
           }
+          { this.state.hoveredProject ? this.state.hoveredProject.points.map(point => (
+            <ProjectPin
+              lat={point.latitude}
+              lng={point.longitude}
+            />
+          )): null}
         </GoogleMapReact>
         <MapSideBar />
         <StationListModal

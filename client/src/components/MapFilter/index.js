@@ -23,10 +23,6 @@ class MapFilter extends React.PureComponent {
     return (
       <div>        
         <Divider orientation="left">Filter Stations</Divider>
-        <AggregateRadio onChange={this.setFilter} defaultValue={this.props.filters.aggregatedData ? 'aggregated' : 'all'} buttonStyle={'solid'}>
-          <Radio.Button value='all'>All</Radio.Button>
-          <Radio.Button value='aggregated'>Aggregated Data</Radio.Button>
-        </AggregateRadio>
         <NameSearch
           defaultValue={this.props.filters.name}
           placeholder="Name Contains"

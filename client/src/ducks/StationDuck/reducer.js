@@ -8,6 +8,7 @@ import {
   SHOW_PROJECT_MODAL,
   CLOSE_PROJECT_MODAL,
   CLEAR_SELECTED_PROJECT,
+  SET_METRIC,
 } from './actions'
 
 const defaultState = {
@@ -21,6 +22,7 @@ const defaultState = {
     aggregatedData: false,
     name: '',
   },
+  metric: 'max'
 }
 
 export default function stationReducer(state=defaultState, action){
@@ -40,7 +42,10 @@ export default function stationReducer(state=defaultState, action){
         ...state,
         stationGraphData: {
           ...state.stationGraphData,
-          [action.payload.stationId]: action.payload.data.map(row => [new Date(row[0]), parseFloat(row[1])]),
+          [action.payload.stationId]: {
+            ...state.payload.stationId,
+            [action.payload.metric]: action.payload.data.map(row => [new Date(row[0]), parseFloat(row[1])]),
+          }
         }
       }
     case FETCH_COMBINED_GRAPH_SUCCESS:
@@ -57,11 +62,17 @@ export default function stationReducer(state=defaultState, action){
         ...state,
         combinedGraphData: {
           ...state.combinedGraphData,
-          [action.payload.stationIds]: processedData,
+          [action.payload.stationIds]:{
+            ...state.combinedGraphData[action.payload.stationIds],
+            [action.payload.metric]: processedData
+          },
         },
         yearGraphData: {
           ...state.yearGraphData,
-          [action.payload.stationIds]: yearData
+          [action.payload.stationIds]: {
+            ...state.yearGraphData[action.payload.stationIds],
+            [action.payload.metric]: yearData,
+          }
         }
       }
     case SET_STATION_FILTER:
@@ -92,6 +103,11 @@ export default function stationReducer(state=defaultState, action){
       return {
         ...state,
         isProjectModalVisible: false,
+      }
+    case SET_METRIC:
+      return {
+        ...state,
+        metric: action.payload.metric,
       }
     default:
       return state;

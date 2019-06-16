@@ -20,3 +20,5 @@ export const selectFilteredStations = createSelector(
         })
     }
 )
+
+export const selectMetric = state => state.stations.metric

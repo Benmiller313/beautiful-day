@@ -1,4 +1,4 @@
-import { put, call, takeEvery, takeLatest } from 'redux-saga/effects'
+import { put, call, takeEvery, takeLatest, select } from 'redux-saga/effects'
 import axios from 'axios'
 import {
   FETCH_STATIONS,
@@ -10,7 +10,9 @@ import {
   FETCH_COMBINED_GRAPH_SUCCESS,
   FETCH_PROJECTS,
   fetchProjectsSuccess,
+  SET_METRIC,
 } from './actions'
+import { selectMetric } from './selectors';
 
 
 function fetchStationsFromAPI() {
@@ -55,8 +57,8 @@ function fetchGraphAllFromAPI(stationId) {
   })
 }
 
-function fetchCombinedFromAPI(stations) {
-  return axios.get(`weather/stations/graphcombined?station_ids=${stations.map(station => station.id).join(',')}&columns=max`)
+function fetchCombinedFromAPI(stations, metric) {
+  return axios.get(`weather/stations/graphcombined?station_ids=${stations.map(station => station.id).join(',')}&columns=${metric}`)
 }
 
 function* fetchGraphAllWorker(action) {
@@ -73,13 +75,34 @@ function* fetchGraphAllWorker(action) {
 
 function* fetchCombinedGraphWorker(action) {
   try {
-    const response = yield call(fetchCombinedFromAPI, action.payload)
+    const metric = yield select(selectMetric)
+    const response = yield call(fetchCombinedFromAPI, action.payload, metric)
     yield put({
       type: FETCH_COMBINED_GRAPH_SUCCESS,
-      payload: { data: response.data.data, stationIds: action.payload.map(station => station.id).join('_')},
+      payload: { data: response.data.data, stationIds: action.payload.map(station => station.id).join('_'), metric,},
     })
   } catch (error) {
     console.log(error)
+  }
+}
+
+function* setMetricWorker(action) {
+  const state = yield select()
+  const data = state.stations.combinedGraphData[action.payload.stations.map(station => station.id).join('_')]
+  if (!data || !data[action.payload.metric]) {
+    try {
+      const response = yield call(fetchCombinedFromAPI, action.payload.stations, action.payload.metric)
+      yield put({
+        type: FETCH_COMBINED_GRAPH_SUCCESS,
+        payload: { 
+          data: response.data.data,
+          stationIds: action.payload.stations.map(station => station.id).join('_'),
+          metric: action.payload.metric,
+        },
+      })  
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
 
@@ -88,4 +111,5 @@ export function* watchStationAsync() {
   yield takeEvery(FETCH_PROJECTS, fetchProjectsWorker)
   yield takeLatest(FETCH_STATION_GRAPH_ALL, fetchGraphAllWorker)
   yield takeLatest(FETCH_COMBINED_GRAPH, fetchCombinedGraphWorker)
+  yield takeEvery(SET_METRIC, setMetricWorker)
 }

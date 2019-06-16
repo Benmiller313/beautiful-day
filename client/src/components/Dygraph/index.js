@@ -53,6 +53,7 @@ class WrapperDygraph extends React.Component {
   }
 
   componentDidMount() {
+    console.log('title', this.props.title)
     new Dygraph(this.refs.chart, this.props.data, {
       labels: this.props.labels,
       title: this.props.title,
@@ -60,6 +61,7 @@ class WrapperDygraph extends React.Component {
     })
   }
   componentDidUpdate() {
+    console.log('title', this.props.title)
     new Dygraph(this.refs.chart, this.props.data, {
       labels: this.props.labels,
       title: this.props.title,

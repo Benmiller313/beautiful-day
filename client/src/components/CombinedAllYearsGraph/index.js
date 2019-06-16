@@ -6,6 +6,8 @@ import { BeatLoader } from 'react-spinners';
 
 import { fetchCombinedGraph } from '../../ducks/StationDuck/actions'
 import Dygraph from '../Dygraph'
+import { selectMetric } from '../../ducks/StationDuck/selectors'
+import { METRIC_TO_TITLE } from '../../constants/graph';
 
 class CombinedAllYearsGraph extends React.Component {
   static propTypes = {
@@ -14,6 +16,7 @@ class CombinedAllYearsGraph extends React.Component {
     fetchCombinedGraph: PropTypes.func.isRequired,
     trend_line_high: PropTypes.number,
     trend_line_low: PropTypes.number,
+    metric: PropTypes.string.isRequired,
   }
   static defaultProps = {
     trend_line_high: null,
@@ -25,7 +28,7 @@ class CombinedAllYearsGraph extends React.Component {
   }
 
   render() {
-    if (!this.props.data) {
+    if (!this.props.data || !this.props.data[this.props.metric]) {
       return (
         <BeatLoader
           sizeUnit={"px"}
@@ -46,9 +49,9 @@ class CombinedAllYearsGraph extends React.Component {
     }
     return (
       <Dygraph 
-        data={this.props.data}
+        data={this.props.data[this.props.metric]}
         labels={["Date", ...this.props.stations.map(station => `${station.name} Max`)]}
-        title='Daily Maximum Temperate'
+        title={`Daily ${METRIC_TO_TITLE[this.props.metric]}`}
         trend_line_high={trend_line_high}
         trend_line_low={trend_line_low}
       />
@@ -58,6 +61,7 @@ class CombinedAllYearsGraph extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   data: state.stations.combinedGraphData[ownProps.stations.map(station => station.id).join('_')],
+  metric: selectMetric(state)
 })
 
 const mapDispatchToProps = {

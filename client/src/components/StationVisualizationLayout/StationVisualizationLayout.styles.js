@@ -31,4 +31,6 @@ export const Content = styled.div`
     padding: 30px 50px 30px 30px;
 `
 
-    
+export const MetricSelect = styled.div`
+    margin-top: 15px;
+`

@@ -12,6 +12,7 @@ export const SET_SELECTED_PROJECT = 'SET_SELECTED_PROJECT'
 export const CLEAR_SELECTED_PROJECT = 'CLEAR_SELECTED_PROJECT'
 export const SHOW_PROJECT_MODAL = 'SHOW_PROJECT_MODAL'
 export const CLOSE_PROJECT_MODAL = 'CLOSE_PROJECT_MODAL'
+export const SET_METRIC = 'SET_METRIC'
 
 export const fetchStations = () => ({
     type: FETCH_STATIONS
@@ -77,4 +78,12 @@ export const showProjectModal = (project) => ({
 
 export const closeProjectModal = () => ({
     type: CLOSE_PROJECT_MODAL,
+})
+
+export const setMetric = (metric, stations) => ({
+    type: SET_METRIC,
+    payload: {
+        metric,
+        stations,
+    }
 })

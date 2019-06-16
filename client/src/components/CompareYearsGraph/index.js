@@ -8,12 +8,15 @@ import { Button, Icon } from 'antd';
 import { fetchCombinedGraph } from '../../ducks/StationDuck/actions'
 import Dygraph from '../Dygraph'
 import { YearToggleContainer, YearText } from './CompareYearsGraph.styles';
+import { selectMetric } from '../../ducks/StationDuck/selectors';
+import { METRIC_TO_TITLE } from '../../constants/graph';
 
 class CompareYearsGraph extends React.Component {
   static propTypes = {
     data: PropTypes.object,
     stations: PropTypes.string.isRequired,
     fetchCombinedGraph: PropTypes.func.isRequired,
+    metric: PropTypes.string.isRequired,
   }
 
   state = {
@@ -27,7 +30,7 @@ class CompareYearsGraph extends React.Component {
 
   render() {
     
-    if (!this.props.data) {
+    if (!this.props.data || !this.props.data[this.props.metric]) {
       return (
         <BeatLoader
           sizeUnit={"px"}
@@ -37,15 +40,19 @@ class CompareYearsGraph extends React.Component {
         />
       )
     }
-    const years = Object.keys(this.props.data)
+    const data = this.props.data[this.props.metric]
+    const years = Object.keys(data)
     const baseYear = this.state.baseYear ? this.state.baseYear : years[years.length-1]
     const targetYear = this.state.targetYear ? this.state.targetYear : years[years.length-1]
     const maxYear = parseInt(years[years.length-1])
     const minYear = parseInt(years[0])
-    const combinedSeries = this.props.data[baseYear].map((baseRow, i) =>{
-      const targetData = this.props.data[targetYear][i]
+    console.log('data', data)
+    const combinedSeries = data[baseYear].map((baseRow, i) =>{
+      const targetData = data[targetYear][i]
       if (targetData) {
-        return baseRow.concat(this.props.data[targetYear][i].slice(1))
+        console.log(targetData)
+        console.log(i)
+        return baseRow.concat(data[targetYear][i].slice(1))
       }
       return baseRow
     })
@@ -56,10 +63,10 @@ class CompareYearsGraph extends React.Component {
           data={combinedSeries}
           labels={[
             "Date",
-            ...this.props.stations.map(station => `${station.name} ${baseYear} Max`),
-            ...this.props.stations.map(station => `${station.name} ${targetYear} Max`),
+            ...this.props.stations.map(station => `${station.name} ${baseYear} ${this.props.metric}`),
+            ...this.props.stations.map(station => `${station.name} ${targetYear} ${this.props.metric}`),
           ]}
-          title='Daily Maximum Temperate'
+          title={`Daily ${METRIC_TO_TITLE[this.props.metric]}`}
         />
         <YearToggleContainer>
           <YearText>Compare: {baseYear}</YearText>
@@ -118,6 +125,7 @@ class CompareYearsGraph extends React.Component {
 
 const mapStateToProps = (state, ownProps) => ({
   data: state.stations.yearGraphData[ownProps.stations.map(station => station.id).join('_')],
+  metric: selectMetric(state),
 })
 
 const mapDispatchToProps = {

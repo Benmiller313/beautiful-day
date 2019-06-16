@@ -1,6 +1,7 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { Button, Menu } from 'antd'
+import { Button, Menu, Radio } from 'antd'
+import { connect } from 'react-redux'
 
 import CombinedAllYearsGraph from '../CombinedAllYearsGraph'
 import {
@@ -8,12 +9,16 @@ import {
   Header,
   Sidebar,
   Content,
+  MetricSelect,
 } from './StationVisualizationLayout.styles'
+import { setMetric } from '../../ducks/StationDuck/actions'
 import CompareYearsGraph from '../CompareYearsGraph';
+import { selectMetric } from '../../ducks/StationDuck/selectors';
 
 
 class StationVisualizationLayout extends React.Component {  
   static propTypes = {
+    setMetric: PropTypes.func.isRequired,
     stations: PropTypes.array.isRequired,
     project: PropTypes.object,
   }
@@ -48,6 +53,10 @@ class StationVisualizationLayout extends React.Component {
     this.setState({selectedVisualization: key})
   }
   
+  onMetricChange = (e) => {
+    this.props.setMetric(e.target.value, this.props.stations)
+  }
+
   render() {
     return (
       <StationVisualizationContainer>
@@ -76,6 +85,13 @@ class StationVisualizationLayout extends React.Component {
         </Sidebar>
         <Content>
           {this.getSelectedVisualization()}
+          <MetricSelect>
+            <Radio.Group defaultValue={this.props.metric} onChange={this.onMetricChange}>
+              <Radio value={'max'}>Maximum Temperature</Radio>
+              <Radio value={'min'}>Minimum Temperature</Radio>
+              <Radio value={'mean'}>Average Temperature</Radio>
+            </Radio.Group>
+          </MetricSelect>
         </Content>
 
       </StationVisualizationContainer>
@@ -83,4 +99,12 @@ class StationVisualizationLayout extends React.Component {
   }
 }
 
-export default StationVisualizationLayout
+const mapStateToProps = (state) => ({
+  metric: selectMetric(state)
+})
+
+const mapDispatchToProps = {
+  setMetric: setMetric,
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(StationVisualizationLayout)

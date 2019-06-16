@@ -8,6 +8,7 @@ const K_WIDTH = 50
 const K_HEIGHT = 50
 
 const PinShape = styled.div`
+    transform:translate(-50%, -50%);
     display: flex;
     align-items: center;
     position: absolute;

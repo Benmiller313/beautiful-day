@@ -220,7 +220,7 @@ class StationMap extends React.Component {
               />
             ))
           }
-          { this.state.hoveredProject ? this.state.hoveredProject.points.map(point => (
+          { this.state.hoveredProject && this.state.hoveredProject.points.length > 1 ? this.state.hoveredProject.points.map(point => (
             <ProjectPin
               lat={point.latitude}
               lng={point.longitude}

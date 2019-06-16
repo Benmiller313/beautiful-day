@@ -65,6 +65,7 @@ class WrapperDygraph extends React.Component {
     new Dygraph(this.refs.chart, this.props.data, {
       labels: this.props.labels,
       title: this.props.title,
+      underlayCallback: this.drawLines,
     })
   }
 

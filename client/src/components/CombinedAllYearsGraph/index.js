@@ -50,10 +50,10 @@ class CombinedAllYearsGraph extends React.Component {
     return (
       <Dygraph 
         data={this.props.data[this.props.metric]}
-        labels={["Date", ...this.props.stations.map(station => `${station.name} Max`)]}
+        labels={["Date", ...this.props.stations.map(station => `${station.name} ${this.props.metric}`)]}
         title={`Daily ${METRIC_TO_TITLE[this.props.metric]}`}
-        trend_line_high={trend_line_high}
-        trend_line_low={trend_line_low}
+        trend_line_high={this.props.metric === 'max' ? trend_line_high: null}
+        trend_line_low={this.props.metric === 'max' ? trend_line_low: null}
       />
     )
   }

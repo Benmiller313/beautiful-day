@@ -6,8 +6,10 @@ from django.db import models
 
 class Station(models.Model):
     CANADIAN_GOVERNMENT = "GC"
+    CLIMATE_DATA = "CD"
     SOURCE_CHOICES = (
         (CANADIAN_GOVERNMENT, "Environment Canada"),
+        (CLIMATE_DATA, "Climate Data"),
     )
 
     source = models.CharField(max_length=2, choices=SOURCE_CHOICES)

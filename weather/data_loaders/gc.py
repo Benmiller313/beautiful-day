@@ -123,8 +123,8 @@ def load_stations():
                 load_daily(station)
 
 
-def denormalize():
-    for station in Station.objects.filter(source='GC'):
+def denormalize(src='GC'):
+    for station in Station.objects.filter(source=src):
         # This nasty aggregate is much better in Django 2
         # Maybe its time for python 3...
         print station.name

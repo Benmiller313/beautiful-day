@@ -5,6 +5,13 @@ from weather.data_loaders import gc
 class Command(BaseCommand):
     help = 'Add Aggregates to GC Station data'
 
-    def handle(self, *args, **kwargs):
+    def add_arguments(self, parser):
+        parser.add_argument('-s', '--src', type=str)
 
-        gc.denormalize()
+
+    def handle(self, *args, **kwargs):
+        src = kwargs['src']
+        if src:
+            gc.denormalize(src=src)
+        else:
+            gc.denormalize()

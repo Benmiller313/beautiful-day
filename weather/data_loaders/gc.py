@@ -26,32 +26,32 @@ def load_daily(station, start_year=None, end_year=None):
     url = 'http://climate.weather.gc.ca/climate_data/bulk_data_e.html' \
           '?format=csv&stationID={station_id}&Year={year}&timeframe=2&submit=Download+Data'
 
-    header_rows = 25
+    header_rows = 2
 
-    DATE = 0
-    YEAR = 1
-    MONTH = 2
-    DAY = 3
-    DATA_QUALITY = 4
-    MAX_TEMP = 5
-    MAX_TEMP_FLAG = 6
-    MIN_TEMP = 7
-    MIN_TEMP_FLAG = 8
-    MEAN_TEMP = 9
-    MEAN_TEMP_FLAG = 10
-    HEAT_DEG_DAYS = 11
-    COOL_DEG_DAYS = 13
-    TOTAL_RAIN = 15
-    TOTAL_SNOW = 17
-    TOTAL_PERCIP = 19
-    SNOW_ON_GROUND = 21
+    DATE = 4
+    YEAR = 5
+    MONTH = 6
+    DAY = 7
+    DATA_QUALITY = 8
+    MAX_TEMP = 9
+    MAX_TEMP_FLAG = 10
+    MIN_TEMP = 11
+    MIN_TEMP_FLAG = 12
+    MEAN_TEMP = 13
+    MEAN_TEMP_FLAG = 14
+    HEAT_DEG_DAYS = 15
+    COOL_DEG_DAYS = 17
+    TOTAL_RAIN = 19
+    TOTAL_SNOW = 21
+    TOTAL_PERCIP = 23
+    SNOW_ON_GROUND = 25
 
     total = 0
     year = start_year if start_year else station.data_start.year
     year_to = end_year if end_year else station.data_end.year
     records = []
     while (year <= year_to):
-        print "Clearing Old Data"
+        print "Clearing Old Data for", station.id
         DailyRecord.objects.filter(station_id=station.id, date__year=year).delete()
         print "Downloading", year
         with closing(requests.get(url.format(year=year, station_id=station.station_id), stream=True)) as r:
@@ -79,7 +79,7 @@ def load_daily(station, start_year=None, end_year=None):
                         snow_on_ground=val_or_none(row[SNOW_ON_GROUND]),
                     ))
 
-                except ValueError as e:
+                except (ValueError, IndexError) as e:
                     print 'Error in row:', row, e
 
         year += 1
@@ -153,6 +153,6 @@ def denormalize(src='GC'):
 
 
 def load_stations_by_date(from_date, to_date):
-    stations = Station.objects.all()
+    stations = Station.objects.filter(source=Station.CANADIAN_GOVERNMENT)
     for station in stations:
         load_daily(station, from_date, to_date)

@@ -7,12 +7,14 @@ from django.db import models
 class Station(models.Model):
     CANADIAN_GOVERNMENT = "GC"
     CLIMATE_DATA = "CD"
+    GLOBAL_HISTORICAL_CLIMATOLOGY_NETWORK = "GHCND"
     SOURCE_CHOICES = (
         (CANADIAN_GOVERNMENT, "Environment Canada"),
         (CLIMATE_DATA, "Climate Data"),
+        (GLOBAL_HISTORICAL_CLIMATOLOGY_NETWORK, "Global Historical Climatology Network")
     )
 
-    source = models.CharField(max_length=2, choices=SOURCE_CHOICES)
+    source = models.CharField(max_length=10, choices=SOURCE_CHOICES)
     name = models.CharField(max_length=255, default='')
     station_id = models.CharField(max_length=255)
     latitude = models.DecimalField(max_digits=20, decimal_places=12, null=True)

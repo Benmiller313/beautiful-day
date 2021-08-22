@@ -18,7 +18,7 @@ def index(request):
 
 
 class StationViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Station.objects.all()
+    queryset = Station.objects.filter(has_daily_data=True)
     serializer_class = StationSerializer
 
 

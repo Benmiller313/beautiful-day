@@ -12,7 +12,7 @@
     "highcharts-react-official": "^2.0.0",
     "http-proxy-middleware": "^0.19.1",
     "memoize-one": "^4.0.3",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "points-cluster": "^0.1.4",
     "react": "^16.5.2",
     "react-app-rewire-less": "^2.1.3",

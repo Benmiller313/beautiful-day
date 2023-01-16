@@ -8,7 +8,7 @@
     "babel-plugin-import": "^1.11.0",
     "dygraphs": "^2.1.0",
     "google-map-react": "^1.0.9",
-    "highcharts": "^7.0.3",
+    "highcharts": "^9.0.0",
     "highcharts-react-official": "^2.0.0",
     "http-proxy-middleware": "^0.19.1",
     "memoize-one": "^4.0.3",

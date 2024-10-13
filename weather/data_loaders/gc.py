@@ -9,7 +9,7 @@ from django.db.models import (
     Count,
     IntegerField,
     When,
-)
+    Max, Min, Q)
 
 from weather.models import Station, DailyRecord
 
@@ -50,39 +50,50 @@ def load_daily(station, start_year=None, end_year=None):
     year = start_year if start_year else station.data_start.year
     year_to = end_year if end_year else station.data_end.year
     records = []
-    while (year <= year_to):
+    retries = 0
+    while (year <= year_to and retries < 5):
         print "Clearing Old Data for", station.id
         DailyRecord.objects.filter(station_id=station.id, date__year=year).delete()
         print "Downloading", year
-        with closing(requests.get(url.format(year=year, station_id=station.station_id), stream=True)) as r:
-            reader = csv.reader(r.iter_lines(), delimiter=',', quotechar='"')
-            rows = 0
-            print url.format(year=year, station_id=station.station_id)
-            for row in reader:
-                if rows < header_rows:
-                    rows += 1
-                    continue
-                try:
-                    records.append(DailyRecord(
-                        station=station,
-                        date=date(
-                            year=int(row[YEAR]),
-                            month=int(row[MONTH]),
-                            day=int(row[DAY]),
-                        ),
-                        max_temp=val_or_none(row[MAX_TEMP]),
-                        min_temp=val_or_none(row[MIN_TEMP]),
-                        mean_temp=val_or_none(row[MEAN_TEMP]),
-                        rain=val_or_none(row[TOTAL_RAIN]),
-                        snow=val_or_none(row[TOTAL_SNOW]),
-                        total_percipitation=val_or_none(row[TOTAL_PERCIP]),
-                        snow_on_ground=val_or_none(row[SNOW_ON_GROUND]),
-                    ))
+        try:
+            with closing(requests.get(url.format(year=year, station_id=station.station_id), stream=True)) as r:
+                reader = csv.reader(r.iter_lines(), delimiter=',', quotechar='"')
+                rows = 0
+                print url.format(year=year, station_id=station.station_id)
+                for row in reader:
+                    if rows < header_rows:
+                        rows += 1
+                        continue
+                    try:
+                        if row[MAX_TEMP] or row[MIN_TEMP] or row[MEAN_TEMP] or row[TOTAL_RAIN] or row[TOTAL_SNOW] or row[TOTAL_PERCIP] or row[SNOW_ON_GROUND]:
+                            records.append(DailyRecord(
+                                station=station,
+                                date=date(
+                                    year=int(row[YEAR]),
+                                    month=int(row[MONTH]),
+                                    day=int(row[DAY]),
+                                ),
+                                max_temp=val_or_none(row[MAX_TEMP]),
+                                min_temp=val_or_none(row[MIN_TEMP]),
+                                mean_temp=val_or_none(row[MEAN_TEMP]),
+                                rain=val_or_none(row[TOTAL_RAIN]),
+                                snow=val_or_none(row[TOTAL_SNOW]),
+                                total_percipitation=val_or_none(row[TOTAL_PERCIP]),
+                                snow_on_ground=val_or_none(row[SNOW_ON_GROUND]),
+                            ))
 
-                except (ValueError, IndexError) as e:
-                    print 'Error in row:', row, e
+                    except (ValueError, IndexError) as e:
+                        print 'Error in row:', row, e
+            year += 1
+            retries = 0
+        except Exception as e:
+            retries += 1
+            print 'Error, retrying number', retries
+            print e
 
-        year += 1
+    if retries >= 5:
+        print "Giving up loading station", station.id
+
     DailyRecord.objects.bulk_create(records)
     print "added", len(records), "records"
     total += len(records)
@@ -128,7 +139,7 @@ def denormalize(src='GC'):
         # This nasty aggregate is much better in Django 2
         # Maybe its time for python 3...
         print station.name
-        aggregates = Station.objects.filter(id=station.id).aggregate(
+        aggregates = Station.objects.filter(id=station.id).filter(Q(dailyrecord__max_temp__isnull=False) |  Q(dailyrecord__min_temp__isnull=False) |  Q(dailyrecord__mean_temp__isnull=False) |  Q(dailyrecord__rain__isnull=False) |  Q(dailyrecord__snow__isnull=False) | Q(dailyrecord__total_percipitation__isnull=False)).aggregate(
             num_records=Count('dailyrecord'),
             num_temp=Sum(
                 Case(
@@ -143,13 +154,19 @@ def denormalize(src='GC'):
                     default=0,
                     output_field=IntegerField()
                 )
-            )
+            ),
+            data_end=Max('dailyrecord__date'),
+            data_start=Min('dailyrecord__date'),
         )
         station.daily_record_count = aggregates['num_records']
         station.daily_temp_count = aggregates['num_temp']
         station.daily_percip_count = aggregates['num_percip']
+        if(aggregates['num_records'] and aggregates['num_records'] > 0):
+            station.data_start = aggregates["data_start"]
+            station.data_end = aggregates["data_end"]
         station.save()
         print aggregates
+        print station
 
 
 def load_stations_by_date(from_date, to_date):

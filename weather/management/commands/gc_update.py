@@ -14,4 +14,5 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         from_date = kwargs['from']
         to_date = kwargs['to']
+        print("Loading...")
         gc.load_stations_by_date(from_date.year, to_date.year)

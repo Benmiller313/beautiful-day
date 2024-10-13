@@ -88,15 +88,11 @@ def _load_month_row(month_row, month_records, station):
 
 def _publish_month(station, month, year, month_records):
     if not month_records:
-        return
+        return []
     record_list = list(month_records.values())
-    try:
-        DailyRecord.objects.bulk_create(record_list)
-    except Exception as e:
-        print(e, station.station_id)
     station.daily_temp_count += len(record_list)
     station.daily_record_count += len(record_list)
-    return
+    return record_list
 
 def load_daily(station, start_year=None, end_year=None):
     """
@@ -142,11 +138,10 @@ def load_daily(station, start_year=None, end_year=None):
         previous_year = -1
         first_record = None
 
-
         for line in raw_file:
             year, month, element = _read_month_row_meta(line)
             if month != previous_month and previous_month != -1 and current_month_records:
-                _publish_month(station, previous_month, previous_year, current_month_records)
+                records += _publish_month(station, previous_month, previous_year, current_month_records)
                 current_month_records = {}
                 station.has_daily_data = True
 
@@ -161,5 +156,10 @@ def load_daily(station, start_year=None, end_year=None):
                 station.data_end = record.date
 
         print "Saving", station.station_id, station.data_start, station.data_end
+        try:
+            DailyRecord.objects.bulk_create(records)
+        except Exception as e:
+            print(e, station.station_id)
+
         station.save()
 

@@ -47,7 +47,7 @@
     "not op_mini all"
   ],
   "proxy": "http://localhost:8000",
-   "engines": {
+  "engines": {
     "node": "13.5.0"
   }
 }

@@ -2,5 +2,8 @@
   "cacheDirectories": ["client/node_modules"],
   "scripts": {
     "postinstall": "cd client && yarn install && yarn build"
+  },
+  "engines": {
+    "node": "13.5.0"
   }
 }

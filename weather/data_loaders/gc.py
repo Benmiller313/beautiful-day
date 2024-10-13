@@ -52,14 +52,14 @@ def load_daily(station, start_year=None, end_year=None):
     records = []
     retries = 0
     while (year <= year_to and retries < 5):
-        print "Clearing Old Data for", station.id
+        print("Clearing Old Data for", station.id)
         DailyRecord.objects.filter(station_id=station.id, date__year=year).delete()
-        print "Downloading", year
+        print("Downloading", year)
         try:
             with closing(requests.get(url.format(year=year, station_id=station.station_id), stream=True)) as r:
                 reader = csv.reader(r.iter_lines(), delimiter=',', quotechar='"')
                 rows = 0
-                print url.format(year=year, station_id=station.station_id)
+                print(url.format(year=year, station_id=station.station_id))
                 for row in reader:
                     if rows < header_rows:
                         rows += 1
@@ -83,19 +83,19 @@ def load_daily(station, start_year=None, end_year=None):
                             ))
 
                     except (ValueError, IndexError) as e:
-                        print 'Error in row:', row, e
+                        print('Error in row:', row, e)
             year += 1
             retries = 0
         except Exception as e:
             retries += 1
-            print 'Error, retrying number', retries
-            print e
+            print('Error, retrying number', retries)
+            print(e)
 
     if retries >= 5:
-        print "Giving up loading station", station.id
+        print("Giving up loading station", station.id)
 
     DailyRecord.objects.bulk_create(records)
-    print "added", len(records), "records"
+    print("added", len(records), "records")
     total += len(records)
     if total:
         station.has_daily_data = True
@@ -120,7 +120,7 @@ def load_stations():
     with open('gc_stations.csv', 'rb') as raw_file:
         reader = csv.reader(raw_file, delimiter='\t')
         for row in reader:
-            print row
+            print(row)
             station, _ = Station.objects.get_or_create(source=Station.CANADIAN_GOVERNMENT, station_id=row[STATION_ID])
             if station.has_daily_data:
                 continue
@@ -138,7 +138,7 @@ def denormalize(src='GC'):
     for station in Station.objects.filter(source=src):
         # This nasty aggregate is much better in Django 2
         # Maybe its time for python 3...
-        print station.name
+        print(station.name)
         aggregates = Station.objects.filter(id=station.id).filter(Q(dailyrecord__max_temp__isnull=False) |  Q(dailyrecord__min_temp__isnull=False) |  Q(dailyrecord__mean_temp__isnull=False) |  Q(dailyrecord__rain__isnull=False) |  Q(dailyrecord__snow__isnull=False) | Q(dailyrecord__total_percipitation__isnull=False)).aggregate(
             num_records=Count('dailyrecord'),
             num_temp=Sum(
@@ -165,8 +165,8 @@ def denormalize(src='GC'):
             station.data_start = aggregates["data_start"]
             station.data_end = aggregates["data_end"]
         station.save()
-        print aggregates
-        print station
+        print(aggregates)
+        print(station)
 
 
 def load_stations_by_date(from_date, to_date):

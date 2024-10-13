@@ -12,5 +12,5 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
 
-        print 'loading ', options['file_name']
+        print('loading ', options['file_name'])
         cd.load_stations(options['file_name'], options['prefix'])

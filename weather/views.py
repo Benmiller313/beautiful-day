@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+
 import csv
 import re
 
@@ -11,6 +11,7 @@ from rest_framework import viewsets
 
 from weather.models import Project, Station
 from weather.serializers import StationSerializer, ProjectSerializer
+from functools import reduce
 
 
 def index(request):
@@ -26,7 +27,7 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ProjectSerializer
 
     def get_queryset(self):
-        print self.request.user
+        print(self.request.user)
         if self.request.user.is_authenticated():
             return Project.objects.all()
         return Project.objects.filter(private=False)

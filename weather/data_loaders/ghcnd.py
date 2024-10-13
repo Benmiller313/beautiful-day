@@ -128,7 +128,7 @@ def load_daily(station, start_year=None, end_year=None):
     """
     records = []
     with open('ghcnd_all/{}.dly'.format(station.station_id)) as raw_file:
-        print("clearing for {}".format(station.name))
+        print(("clearing for {}".format(station.name)))
         station.has_daily_data = False
         station.daily_record_count = 0
         station.daily_temp_count = 0
@@ -155,11 +155,11 @@ def load_daily(station, start_year=None, end_year=None):
             if record:
                 station.data_end = record.date
 
-        print "Saving", station.station_id, station.data_start, station.data_end
+        print("Saving", station.station_id, station.data_start, station.data_end)
         try:
             DailyRecord.objects.bulk_create(records)
         except Exception as e:
-            print(e, station.station_id)
+            print((e, station.station_id))
 
         station.save()
 

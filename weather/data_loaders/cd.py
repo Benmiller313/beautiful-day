@@ -11,12 +11,12 @@ def load_stations(file_name, station_prefix):
     with open(file_name, 'rb') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            print row
+            print(row)
             date = datetime.datetime.strptime(row.pop(''), '%Y-%m-%d %H:%M:%S').date()
             lat = row.pop('lat')
             lon = row.pop('lon')
             if not lat or not lon:
-                print 'no lat lon skipping row'
+                print('no lat lon skipping row')
                 continue
             for station_name in row:
                 name = station_prefix + " " + station_name

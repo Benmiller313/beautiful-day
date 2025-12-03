@@ -1,9 +1,9 @@
 from datetime import date
 
 from weather.models import Station, DailyRecord
+from weather.data_loaders.gc import denormalize_station
 
-
-def _parse_stattion_file_line(line):
+def _parse_station_file_line(line):
 
     station_id = line[0:11].strip()
     lat = line[12:20].strip()
@@ -37,10 +37,11 @@ def load_stations(country_code=None, state_code=None):
         ------------------------------
 
     """
-
-    with open('ghcnd-stations.csv', 'rb') as raw_file:
-        for line in raw_file:
-            station_id, lat, lon, state, name = _parse_stattion_file_line(line)
+    print("Loading stations", country_code, state_code)
+    with open("ghcnd-stations.csv", "r", encoding="utf-8", newline="") as fh:
+        for line in fh:
+            station_id, lat, lon, state, name = _parse_station_file_line(line)
+            state = (state or "").strip().upper()
             if state == state_code:
                 station, _ = Station.objects.get_or_create(
                     source=Station.GLOBAL_HISTORICAL_CLIMATOLOGY_NETWORK,
@@ -51,6 +52,7 @@ def load_stations(country_code=None, state_code=None):
                 station.longitude = lon
                 station.save()
                 load_daily(station)
+                denormalize_station(station)
 
 
 def _read_month_row_meta(month_row):

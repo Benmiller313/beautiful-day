@@ -107,3 +107,4 @@ venv.bak/
 .DS_Store
 
 ghcnd_all
+db_backups

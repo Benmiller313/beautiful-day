@@ -28,7 +28,7 @@ class ProjectViewSet(viewsets.ReadOnlyModelViewSet):
 
     def get_queryset(self):
         print(self.request.user)
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             return Project.objects.all()
         return Project.objects.filter(private=False)
 

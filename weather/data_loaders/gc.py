@@ -1,6 +1,7 @@
 import csv
 from datetime import date
 from contextlib import closing
+from codecs import iterdecode
 
 import requests
 from django.db.models import (
@@ -10,6 +11,8 @@ from django.db.models import (
     IntegerField,
     When,
     Max, Min, Q)
+
+import io
 
 from weather.models import Station, DailyRecord
 
@@ -57,7 +60,9 @@ def load_daily(station, start_year=None, end_year=None):
         print("Downloading", year)
         try:
             with closing(requests.get(url.format(year=year, station_id=station.station_id), stream=True)) as r:
-                reader = csv.reader(r.iter_lines(), delimiter=',', quotechar='"')
+                csv_data = io.StringIO(r.text)
+
+                reader = csv.reader(csv_data)
                 rows = 0
                 print(url.format(year=year, station_id=station.station_id))
                 for row in reader:
@@ -95,9 +100,10 @@ def load_daily(station, start_year=None, end_year=None):
         print("Giving up loading station", station.id)
 
     DailyRecord.objects.bulk_create(records)
-    print("added", len(records), "records")
+    print("added", len(records))
     total += len(records)
     if total:
+        print("Sample record", records[0].date, records[0].max_temp)
         station.has_daily_data = True
         station.save()
 
@@ -133,40 +139,40 @@ def load_stations():
             if not station.has_daily_data:
                 load_daily(station)
 
+def denormalize_station(station):
+    print("Denormalizing station", station.name)
+    aggregates = Station.objects.filter(id=station.id).filter(Q(dailyrecord__max_temp__isnull=False) |  Q(dailyrecord__min_temp__isnull=False) |  Q(dailyrecord__mean_temp__isnull=False) |  Q(dailyrecord__rain__isnull=False) |  Q(dailyrecord__snow__isnull=False) | Q(dailyrecord__total_percipitation__isnull=False)).aggregate(
+        num_records=Count('dailyrecord'),
+        num_temp=Sum(
+            Case(
+                When(dailyrecord__max_temp__isnull=False, then=1),
+                default=0,
+                output_field=IntegerField(),
+            ),
+        ),
+        num_percip=Sum(
+            Case(
+                When(dailyrecord__total_percipitation__isnull=False, then=1),
+                default=0,
+                output_field=IntegerField()
+            )
+        ),
+        data_end=Max('dailyrecord__date'),
+        data_start=Min('dailyrecord__date'),
+    )
+    station.daily_record_count = aggregates['num_records']
+    station.daily_temp_count = aggregates['num_temp']
+    station.daily_percip_count = aggregates['num_percip']
+    if(aggregates['num_records'] and aggregates['num_records'] > 0):
+        station.data_start = aggregates["data_start"]
+        station.data_end = aggregates["data_end"]
+    station.save()
+    print(aggregates)
+    print(station)
 
 def denormalize(src='GC'):
     for station in Station.objects.filter(source=src):
-        # This nasty aggregate is much better in Django 2
-        # Maybe its time for python 3...
-        print(station.name)
-        aggregates = Station.objects.filter(id=station.id).filter(Q(dailyrecord__max_temp__isnull=False) |  Q(dailyrecord__min_temp__isnull=False) |  Q(dailyrecord__mean_temp__isnull=False) |  Q(dailyrecord__rain__isnull=False) |  Q(dailyrecord__snow__isnull=False) | Q(dailyrecord__total_percipitation__isnull=False)).aggregate(
-            num_records=Count('dailyrecord'),
-            num_temp=Sum(
-                Case(
-                    When(dailyrecord__max_temp__isnull=False, then=1),
-                    default=0,
-                    output_field=IntegerField(),
-                ),
-            ),
-            num_percip=Sum(
-                Case(
-                    When(dailyrecord__total_percipitation__isnull=False, then=1),
-                    default=0,
-                    output_field=IntegerField()
-                )
-            ),
-            data_end=Max('dailyrecord__date'),
-            data_start=Min('dailyrecord__date'),
-        )
-        station.daily_record_count = aggregates['num_records']
-        station.daily_temp_count = aggregates['num_temp']
-        station.daily_percip_count = aggregates['num_percip']
-        if(aggregates['num_records'] and aggregates['num_records'] > 0):
-            station.data_start = aggregates["data_start"]
-            station.data_end = aggregates["data_end"]
-        station.save()
-        print(aggregates)
-        print(station)
+        denormalize_station(station)
 
 
 def load_stations_by_date(from_date, to_date):

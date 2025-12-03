@@ -11,6 +11,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         src = kwargs['src']
+        print("Denormalizing stations", src)
         if src:
             gc.denormalize(src=src)
         else:

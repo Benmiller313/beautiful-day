@@ -1,4 +1,4 @@
-from django.conf.urls import url, include
+from django.urls import re_path, include
 from rest_framework import routers
 
 
@@ -10,11 +10,11 @@ router.register(r'stations', views.StationViewSet)
 router.register(r'project', views.ProjectViewSet, 'project')
 
 urlpatterns = [
-    url(r'^$', views.index, name='index'),
-    url(r'^', include(router.urls)),
-    url(r'^stations/aggregatecombined', views.aggregateCombinedStations),
-    url(r'^stations/graphcombined', views.combinedGraph),
-    url(r'^stations/(?P<station_id>[0-9]+)/aggregated', views.aggregatedData),
-    url(r'^stations/(?P<station_id>[0-9]+)/graph', views.stationGraph),
-    url(r'^stations/(?P<station_id>[0-9]+)/rawtemp', views.rawDailyValues),
+    re_path(r'^$', views.index, name='index'),
+    re_path(r'^', include(router.urls)),
+    re_path(r'^stations/aggregatecombined', views.aggregateCombinedStations),
+    re_path(r'^stations/graphcombined', views.combinedGraph),
+    re_path(r'^stations/(?P<station_id>[0-9]+)/aggregated', views.aggregatedData),
+    re_path(r'^stations/(?P<station_id>[0-9]+)/graph', views.stationGraph),
+    re_path(r'^stations/(?P<station_id>[0-9]+)/rawtemp', views.rawDailyValues),
 ]

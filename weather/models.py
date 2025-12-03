@@ -31,7 +31,7 @@ class Station(models.Model):
 
 
 class DailyRecord(models.Model):
-    station = models.ForeignKey(Station)
+    station = models.ForeignKey(Station, on_delete=models.CASCADE)
     date = models.DateField()
     max_temp = models.DecimalField(max_digits=5, decimal_places=2, null=True)
     min_temp = models.DecimalField(max_digits=5, decimal_places=2, null=True)
@@ -60,7 +60,7 @@ class Project(models.Model):
 class ProjectGrouping(models.Model):
     name = models.CharField(max_length=256)
     stations = models.ManyToManyField(Station)
-    project = models.ForeignKey(Project, related_name='groupings')
+    project = models.ForeignKey(Project, related_name='groupings', on_delete=models.CASCADE)
     description = models.TextField()
     trend_line_high = models.IntegerField(null=True)
     trend_line_low = models.IntegerField(null=True)

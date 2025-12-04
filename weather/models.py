@@ -67,3 +67,42 @@ class ProjectGrouping(models.Model):
 
     def __unicode__(self):
         return "{}: {}".format(self.project.name, self.name)
+
+
+class DataLoadLog(models.Model):
+    """Tracks successful data load operations for incremental updates."""
+    
+    PENDING = 'pending'
+    SUCCESS = 'success'
+    FAILED = 'failed'
+    PARTIAL = 'partial'
+    STATUS_CHOICES = [
+        (PENDING, 'Pending'),
+        (SUCCESS, 'Success'),
+        (FAILED, 'Failed'),
+        (PARTIAL, 'Partial'),
+    ]
+    
+    source = models.CharField(max_length=10, choices=Station.SOURCE_CHOICES)
+    started_at = models.DateTimeField(auto_now_add=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=PENDING)
+    
+    # The date range that was loaded
+    load_from_date = models.DateField()
+    load_to_date = models.DateField()
+    
+    # Stats
+    stations_processed = models.IntegerField(default=0)
+    stations_skipped = models.IntegerField(default=0)
+    stations_failed = models.IntegerField(default=0)
+    records_created = models.IntegerField(default=0)
+    
+    # Error details
+    error_message = models.TextField(blank=True, default='')
+    
+    class Meta:
+        ordering = ['-started_at']
+    
+    def __str__(self):
+        return f"{self.source} load: {self.load_from_date} to {self.load_to_date} ({self.status})"
